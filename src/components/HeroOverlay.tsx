@@ -91,7 +91,7 @@ export default function HeroOverlay({ isVisible }: { isVisible: boolean }) {
 
         {/* Top Section: Title & Changing Text */}
         <motion.div 
-          style={{ x: xTitle, y: yTitle, scale: scaleTitle }}
+          style={{ x: xTitle, y: yTitle, scale: scaleTitle, willChange: 'transform' }}
           className="relative z-10 p-5 md:p-6 origin-top-left"
         >
           <div className="flex flex-col gap-6 mt-4">
@@ -132,7 +132,7 @@ export default function HeroOverlay({ isVisible }: { isVisible: boolean }) {
 
         {/* Bottom Section - Event Details <=> Agenda List */}
         <motion.div 
-           style={{ x: xContent, y: yContent, scale: scaleContent }}
+           style={{ x: xContent, y: yContent, scale: scaleContent, willChange: 'transform' }}
            className="relative z-10 p-5 md:p-6 origin-bottom-left"
         >
           {/* Container for swapping bottom content */}

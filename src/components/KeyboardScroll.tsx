@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, useMemo } from 'react'
+import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { useScroll, useSpring, MotionValue, useMotionValue, useTransform, motion } from 'framer-motion'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
@@ -113,37 +113,65 @@ export default function KeyboardScroll() {
   // Wipe transition removed
   // Fade out removed
 
-  // Preload all images
+  // Optimized progressive image loading
   useEffect(() => {
-    const loadedImages: HTMLImageElement[] = []
+    const loadedImages: HTMLImageElement[] = new Array(FRAME_COUNT)
     let loadedCount = 0
+    const INITIAL_LOAD_COUNT = 20 // Show experience after first 20 frames
+
+    const updateProgress = (isInitialBatch = false) => {
+      loadedCount++
+      setLoadingProgress(Math.round((loadedCount / FRAME_COUNT) * 100))
+      
+      // Start experience after initial batch is ready
+      if (loadedCount === INITIAL_LOAD_COUNT) {
+        setIsLoaded(true)
+      }
+    }
+
+    const loadImage = async (index: number, isInitialBatch = false) => {
+      const img = new Image()
+      const paddedNumber = index.toString().padStart(5, '0')
+      const path = FRAME_PATH.replace('{i}', paddedNumber)
+      
+      img.onload = async () => {
+        try {
+          await img.decode()
+        } catch (e) {
+          // Silent fail
+        }
+        updateProgress(isInitialBatch)
+      }
+      
+      img.onerror = () => {
+        console.error(`Failed to load frame ${index}`)
+        updateProgress(isInitialBatch)
+      }
+      
+      img.src = path
+      loadedImages[index - 1] = img
+    }
 
     const preloadImages = async () => {
-      for (let i = 1; i <= FRAME_COUNT; i++) {
-        const img = new Image()
-        const paddedNumber = i.toString().padStart(5, '0')
-        const path = FRAME_PATH.replace('{i}', paddedNumber)
-        
-        img.onload = async () => {
-          try {
-             await img.decode()
-          } catch (e) {
-             console.warn('Image decode failed', e)
-          }
-          loadedCount++
-          setLoadingProgress(Math.round((loadedCount / FRAME_COUNT) * 100))
-          if (loadedCount === FRAME_COUNT) setIsLoaded(true)
-        }
-        
-        img.onerror = () => {
-          console.error(`Failed to load frame ${i}`)
-          loadedCount++
-          setLoadingProgress(Math.round((loadedCount / FRAME_COUNT) * 100))
-        }
-        
-        img.src = path
-        loadedImages[i - 1] = img
+      // Priority load: First 20 frames to start experience quickly
+      console.log('Loading initial frames...')
+      const priorityPromises = []
+      for (let i = 1; i <= INITIAL_LOAD_COUNT; i++) {
+        priorityPromises.push(loadImage(i, true))
       }
+      await Promise.all(priorityPromises)
+      
+      // Load remaining frames in background batches
+      const batchSize = 30
+      for (let i = INITIAL_LOAD_COUNT + 1; i <= FRAME_COUNT; i += batchSize) {
+        const batchPromises = []
+        for (let j = i; j < Math.min(i + batchSize, FRAME_COUNT + 1); j++) {
+          batchPromises.push(loadImage(j, false))
+        }
+        // Small delay between batches to keep scrolling smooth
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+      console.log('All frames loaded')
     }
 
     preloadImages()
@@ -154,7 +182,7 @@ export default function KeyboardScroll() {
   
   return (
     <div ref={containerRef} className="relative h-[300vh]">
-      <div className="sticky top-0 h-screen w-full">
+      <div className="sticky top-0 h-screen w-full" style={{ willChange: 'transform' }}>
         {isLoaded && (
           <div className="absolute inset-0 z-20 pointer-events-none">
              {/* Overlay moved to page root */}
