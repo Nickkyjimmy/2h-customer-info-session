@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useMemo } from 'react'
 import { useScroll, useSpring, MotionValue, useMotionValue, useTransform, motion } from 'framer-motion'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
-import HeroOverlay from './HeroOverlay'
+
 
 const FRAME_COUNT = 240
 const FRAME_PATH = '/hero-animation/{i}.png'
@@ -52,8 +52,9 @@ const Scene = ({ images, scrollYProgress }: { images: HTMLImageElement[], scroll
     if (!meshRef.current) return
 
     // Update texture frame based on scroll
+    const progress = scrollYProgress.get()
+    
     if (images.length > 0) {
-        const progress = scrollYProgress.get()
         const frameIndex = Math.min(
             FRAME_COUNT - 1,
             Math.max(0, Math.floor(progress * (FRAME_COUNT - 1)))
@@ -65,7 +66,22 @@ const Scene = ({ images, scrollYProgress }: { images: HTMLImageElement[], scroll
         }
     }
     
-    // No rotation update
+    // "Enter" Transition Effect (Zoom In)
+    // Camera is at Z=5. We move mesh from Z=0 towards Z=10 to pass through.
+    if (progress > 0.75) {
+        // Normalize progress for the last 25% of scroll (Extended for smoothness)
+        const zoomStart = 0.75
+        const zoomEnd = 1.0
+        const t = Math.max(0, (progress - zoomStart) / (zoomEnd - zoomStart))
+        
+        // Quartic ease in for a very smooth start and dramatic "warp" finish
+        const easeT = t * t * t * t
+        
+        // Move Z towards and past the camera (at Z=5)
+        meshRef.current.position.z = THREE.MathUtils.lerp(0, 10, easeT)
+    } else {
+        meshRef.current.position.z = 0
+    }
   })
 
   return (
@@ -88,11 +104,14 @@ export default function KeyboardScroll() {
   })
 
   const smoothProgress = useSpring(scrollYProgress, {
-    mass: 0.1,
+    mass: 0.5,
     damping: 20,
-    stiffness: 100,
-    restDelta: 0.001
+    stiffness: 45,
+    restDelta: 0.0001
   })
+
+  // Wipe transition removed
+  // Fade out removed
 
   // Preload all images
   useEffect(() => {
@@ -135,18 +154,25 @@ export default function KeyboardScroll() {
   
   return (
     <div ref={containerRef} className="relative h-[300vh]">
-      <div className="sticky top-0 h-screen w-full bg-black">
+      <div className="sticky top-0 h-screen w-full">
         {isLoaded && (
           <div className="absolute inset-0 z-20 pointer-events-none">
-             <HeroOverlay isVisible={true} />
+             {/* Overlay moved to page root */}
           </div>
         )}
+        
         {isLoaded ? (
              <Canvas 
-                gl={{ antialias: true, alpha: true, preserveDrawingBuffer: false }} 
+                gl={{ 
+                    antialias: false, 
+                    powerPreference: "high-performance",
+                    stencil: false,
+                    depth: false
+                }} 
                 camera={{ position: [0, 0, 5], fov: 35 }}
                 className="w-full h-full"
-                dpr={[1, 2]}
+                dpr={[1, 1.5]}
+                flat
             >
                 <Scene images={images} scrollYProgress={smoothProgress} />
             </Canvas>

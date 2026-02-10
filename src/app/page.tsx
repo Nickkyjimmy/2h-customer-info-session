@@ -2,10 +2,12 @@
 
 import KeyboardScroll from '@/components/KeyboardScroll'
 import AgendaGallery from '@/components/AgendaGallery'
+import HeroOverlay from '@/components/HeroOverlay'
 
 export default function Home() {
   return (
     <main className="bg-black">
+      <HeroOverlay isVisible={true} />
       <KeyboardScroll />
       
       {/* Agenda Gallery Section */}

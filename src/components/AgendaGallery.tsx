@@ -14,13 +14,13 @@ export default function AgendaGallery() {
   const trackRef = useRef<HTMLDivElement>(null)
 
   const agendaItems = [
-    { src: '/agenda/4.png', title: 'CHECK IN', time: '14:00 - 14:45' },
-    { src: '/agenda/5.png', title: 'THE FIRST SKETCH', time: '14:45 - 15:00' },
-    { src: '/agenda/6.png', title: 'FINDING THE MUSE', time: '15:00 - 15:10' },
-    { src: '/agenda/7.png', title: 'THE NEW CANVAS', time: '15:10 - 15:30' },
-    { src: '/agenda/8.png', title: 'THE SACRED VOW', time: '15:30 - 15:45' },
-    { src: '/agenda/9.png', title: 'MASTERPIECE CREATORS', time: '15:45 - 16:00' },
-    { src: '/agenda/4.png', title: 'THE ART OF TOUCH', time: '16:00 - 18:00' },
+    { src: '/agenda/4.png', title: 'CHECK IN', time: '14:00 - 14:45', description: 'Welcoming guests, registration, and networking.' },
+    { src: '/agenda/5.png', title: 'THE FIRST SKETCH', time: '14:45 - 15:00', description: 'Opening remarks and setting the stage for the journey.' },
+    { src: '/agenda/6.png', title: 'FINDING THE MUSE', time: '15:00 - 15:10', description: 'Discovering the inspiration behind the innovation.' },
+    { src: '/agenda/7.png', title: 'THE NEW CANVAS', time: '15:10 - 15:30', description: 'Unveiling the new product and its core features.' },
+    { src: '/agenda/8.png', title: 'THE SACRED VOW', time: '15:30 - 15:45', description: 'Commitment to quality and customer satisfaction.' },
+    { src: '/agenda/9.png', title: 'MASTERPIECE CREATORS', time: '15:45 - 16:00', description: 'Meet the team behind the vision.' },
+    { src: '/agenda/4.png', title: 'THE ART OF TOUCH', time: '16:00 - 18:00', description: 'Hands-on experience and interactive sessions.' },
   ]
 
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function AgendaGallery() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full bg-black"
+      className="relative w-full"
       style={{ height: `${agendaItems.length * 100}vh` }}
     >
       {/* Sticky viewport */}
@@ -114,6 +114,17 @@ export default function AgendaGallery() {
                     }}
                   >
                     {item.time}
+                  </motion.p>
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+                    className="text-base md:text-lg text-white/80 font-light max-w-2xl leading-relaxed mt-2 font-[family-name:var(--font-inter-tight)]"
+                    style={{
+                      textShadow: '0 2px 10px rgba(0, 0, 0, 0.8)'
+                    }}
+                  >
+                    {item.description}
                   </motion.p>
                 </div>
               </div>
