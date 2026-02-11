@@ -1,38 +1,21 @@
 'use client'
 
-import { useState } from 'react'
-import { motion, useTransform, useScroll, useMotionValueEvent, useSpring } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { motion, useTransform, useScroll, useMotionValueEvent } from 'framer-motion'
 
 export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { isVisible: boolean; isMiniGameVisible?: boolean }) {
   const { scrollY } = useScroll()
   const [activeId, setActiveId] = useState('')
-  
-  // Smooth scroll sync with KeyboardScroll
-  const smoothScrollY = useSpring(scrollY, {
-      mass: 0.5,
-      damping: 20,
-      stiffness: 45,
-      restDelta: 0.0001
+  const [hasTransitioned, setHasTransitioned] = useState(false)
+
+  // Scroll-based transition effect
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    if (latest > 50 && !hasTransitioned) {
+      setHasTransitioned(true)
+    } else if (latest <= 50 && hasTransitioned) {
+      setHasTransitioned(false)
+    }
   })
-
-  // Title Animation: Moves up and to the left (adjusted for better positioning)
-  const xTitle = useTransform(smoothScrollY, [0, 600], ['0px', '-28vw'])
-  const yTitle = useTransform(smoothScrollY, [0, 600], ['0px', '-22vh'])
-  const scaleTitle = useTransform(smoothScrollY, [0, 600], [1, 0.85])
-  
-  // Content/TOC Animation: Moves down and to the left (moved up to show full agenda)
-  const xContent = useTransform(smoothScrollY, [0, 600], ['0px', '-28vw'])
-  const yContent = useTransform(smoothScrollY, [0, 600], ['0px', '18vh'])
-  const scaleContent = useTransform(smoothScrollY, [0, 600], [1, 0.85])
-
-  // Content Crossfade
-  const opacityInitial = useTransform(smoothScrollY, [200, 400], [1, 0])
-  const opacityFinal = useTransform(smoothScrollY, [200, 400], [0, 1])
-  const pointerEventsInitial = useTransform(smoothScrollY, (v) => v > 300 ? 'none' : 'auto')
-  const pointerEventsFinal = useTransform(smoothScrollY, (v) => v > 300 ? 'auto' : 'none')
-
-  // Fade out card background/borders immediately on scroll
-  const cardOpacity = useTransform(smoothScrollY, [0, 200], [1, 0])
 
   const agendaList = [
       { id: 'I', title: 'CHECK IN' },
@@ -72,6 +55,30 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
 
   if (!isVisible) return null
 
+  // Variants for auto-transition
+  const titleVariants = {
+    initial: { x: '0px', y: '0px', scale: 1 },
+    final: { x: '-28vw', y: '-22vh', scale: 0.85, transition: { duration: 1.5, ease: "easeInOut" } as const }
+  }
+
+  const contentVariants = {
+    initial: { x: '0px', y: '0px', scale: 1 },
+    final: { x: '28vw', y: '18vh', scale: 0.85, transition: { duration: 1.5, ease: "easeInOut" } as const }
+  }
+
+  const opacityVariantsInitial = {
+    initial: { opacity: 1 },
+    final: { opacity: 0, transition: { duration: 1 } }
+  }
+
+  const opacityVariantsFinal = {
+    initial: { opacity: 0 },
+    final: { opacity: 1, transition: { duration: 1 } }
+  }
+
+  const pointerEventsInitial = hasTransitioned ? 'none' : 'auto'
+  const pointerEventsFinal = hasTransitioned ? 'auto' : 'none'
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
       {/* Container to hold centered position initially */}
@@ -79,7 +86,8 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
          
          {/* Background Card - Fades out on scroll */}
          <motion.div 
-            style={{ opacity: cardOpacity }}
+            animate={{ opacity: hasTransitioned ? 0 : 1 }}
+            transition={{ duration: 1 }}
             className="absolute inset-0 border border-white/60 bg-black/5 backdrop-blur-sm shadow-2xl z-0"
          >
             {/* Grid Lines */}
@@ -92,7 +100,9 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
 
         {/* Top Section: Title & Changing Text */}
         <motion.div 
-          style={{ x: xTitle, y: yTitle, scale: scaleTitle, willChange: 'transform' }}
+          initial="initial"
+          animate={hasTransitioned ? "final" : "initial"}
+          variants={titleVariants}
           className="relative z-10 p-5 md:p-6 origin-top-left"
         >
           <div className="flex flex-col gap-6 mt-4">
@@ -110,7 +120,10 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
              <div className="relative mt-4 h-[60px]">
                  {/* Initial Text */}
                  <motion.div 
-                    style={{ opacity: opacityInitial, pointerEvents: pointerEventsInitial }}
+                    initial="initial"
+                    animate={hasTransitioned ? "final" : "initial"}
+                    variants={opacityVariantsInitial}
+                    style={{ pointerEvents: pointerEventsInitial }}
                     className="absolute inset-0"
                  >
                     <p className="text-xl md:text-2xl text-white/90 font-extrabold leading-snug">
@@ -120,7 +133,10 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                  
                  {/* Final Text (Scroll) */}
                  <motion.div 
-                    style={{ opacity: opacityFinal, pointerEvents: pointerEventsFinal }}
+                    initial="initial"
+                    animate={hasTransitioned ? "final" : "initial"}
+                    variants={opacityVariantsFinal}
+                    style={{ pointerEvents: pointerEventsFinal }}
                     className="absolute inset-0"
                  >
                     <p className="text-xl md:text-2xl text-white font-extrabold tracking-wider">
@@ -133,17 +149,21 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
 
         {/* Bottom Section - Event Details <=> Agenda List */}
         <motion.div 
-           style={{ x: xContent, y: yContent, scale: scaleContent, willChange: 'transform' }}
+           initial="initial"
+           animate={isMiniGameVisible ? { opacity: 0 } : (hasTransitioned ? "final" : "initial")}
+           variants={contentVariants}
            className="relative z-10 p-5 md:p-6 origin-bottom-left"
-           animate={{ opacity: isMiniGameVisible ? 0 : 1 }}
-           transition={{ duration: 0.5, ease: "easeOut" }}
+           transition={{ duration: isMiniGameVisible ? 0.5 : 1.5, ease: "easeOut" }}
         >
           {/* Container for swapping bottom content */}
           <div className="relative">
               
               {/* Initial: Time & Location */}
               <motion.div 
-                style={{ opacity: opacityInitial, pointerEvents: pointerEventsInitial }}
+                initial="initial"
+                animate={hasTransitioned ? "final" : "initial"}
+                variants={opacityVariantsInitial}
+                style={{ pointerEvents: pointerEventsInitial }}
                 className="flex flex-col gap-6 text-white/80 text-sm"
               >
                  <motion.div
@@ -171,7 +191,10 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
 
               {/* Final: Agenda List */}
               <motion.div 
-                 style={{ opacity: opacityFinal, pointerEvents: pointerEventsFinal }}
+                 initial="initial"
+                 animate={hasTransitioned ? "final" : "initial"}
+                 variants={opacityVariantsFinal}
+                 style={{ pointerEvents: pointerEventsFinal }}
                  className="absolute bottom-0 left-0 w-[420px] flex flex-col gap-0.5 text-white"
               >
                   {agendaList.map((item, i) => {
