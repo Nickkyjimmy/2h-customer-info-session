@@ -1,17 +1,58 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { validateDomainWithError } from '@/lib/validators'
 
 export default function CheckInForm() {
+  const router = useRouter()
   const [domain, setDomain] = useState('')
   const [questions, setQuestions] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log({ domain, questions })
-    // Handle form submission
+    setError(null)
+    setIsSubmitting(true)
+
+    try {
+      // Validate email domain on client side first
+      const validationError = validateDomainWithError(domain)
+      if (validationError) {
+        setError(validationError)
+        setIsSubmitting(false)
+        return
+      }
+
+      // Submit form
+      const response = await fetch('/api/submit-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ domain, questions }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Failed to submit form')
+        setIsSubmitting(false)
+        return
+      }
+
+      // Redirect to mini-game with UUID
+      if (data.id) {
+        router.push(`/mini-game/${data.id}`)
+      }
+    } catch (err) {
+      console.error('Error submitting form:', err)
+      setError('An unexpected error occurred. Please try again.')
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -94,10 +135,10 @@ export default function CheckInForm() {
                   htmlFor="domain" 
                   className="block text-sm font-serif text-amber-100 mb-2 tracking-wide uppercase"
                 >
-                  Domain
+                  Email Address
                 </label>
                 <input
-                  type="text"
+                  type="email"
                   id="domain"
                   value={domain}
                   onChange={(e) => setDomain(e.target.value)}
@@ -108,9 +149,12 @@ export default function CheckInForm() {
                   style={{
                     borderColor: '#D42A87'
                   }}
-                  placeholder="Enter your domain..."
+                  placeholder="your.name@mservice.com.vn"
                   required
                 />
+                <p className="text-xs text-amber-200/60 mt-1 font-serif italic">
+                  Must be @mservice.com.vn or @momo.vn
+                </p>
               </motion.div>
 
               {/* Questions Textarea */}
@@ -142,6 +186,17 @@ export default function CheckInForm() {
                 />
               </motion.div>
 
+              {/* Error Message */}
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-red-900/30 border-2 border-red-500/50 rounded text-red-200 text-sm font-serif"
+                >
+                  {error}
+                </motion.div>
+              )}
+
               {/* Submit Button */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -151,7 +206,8 @@ export default function CheckInForm() {
               >
                 <button
                   type="submit"
-                  className="w-full relative group overflow-hidden"
+                  disabled={isSubmitting}
+                  className="w-full relative group overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {/* Button border frame */}
                   <div className="absolute inset-0 p-[2px]" style={{ background: '#D42A87' }}>
@@ -163,7 +219,7 @@ export default function CheckInForm() {
                   <span className="relative block px-8 py-4 text-lg font-bold text-amber-50 tracking-widest uppercase
                                  font-serif group-hover:text-white transition-colors duration-300
                                  shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
-                    Submit
+                    {isSubmitting ? 'Submitting...' : 'Submit'}
                   </span>
                   
                   {/* Shine effect */}

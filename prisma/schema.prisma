@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Attendance {
+  id           String   @id @default(cuid())
+  domain       String   @unique
+  questions    String?  @db.Text
+  cardReceive  String?  @map("card_receive")
+  attend       Boolean  @default(false)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relation to Card
+  card         Card?    @relation(fields: [cardReceive], references: [id])
+
+  @@map("attendances")
+}
+
+model Card {
+  id        String       @id @default(cuid())
+  name      String
+  quantity  Int          @default(0)
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @updatedAt @map("updated_at")
+
+  // Relation to Attendance
+  attendances Attendance[]
+
+  @@map("card")
+}
