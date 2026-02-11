@@ -138,8 +138,12 @@ export default function AgendaGallery() {
                     className="absolute right-[30%] w-[300px] h-[450px] md:w-[300px] md:h-[600px] hidden md:block"
                   >
                      <Image
-                        src="/card-asset/rare.png"
-                        alt="Rare Card"
+                        src={
+                          item.title === 'FINDING THE MUSE' ? '/agenda/agenda-find-the-muse.png' :
+                          item.title === 'THE ART OF TOUCH' ? '/agenda/agenda-the-art-of-touch.png' :
+                          '/card-asset/rare.png'
+                        }
+                        alt={item.title}
                         fill
                         className="object-contain drop-shadow-[0_0_30px_rgba(255,215,0,0.5)] "
                      />
