@@ -21,6 +21,7 @@ export default function AgendaGallery() {
     { src: '/agenda/8.png', title: 'THE SACRED VOW', time: '15:30 - 15:45', description: 'Commitment to quality and customer satisfaction.' },
     { src: '/agenda/9.png', title: 'MASTERPIECE CREATORS', time: '15:45 - 16:00', description: 'Meet the team behind the vision.' },
     { src: '/agenda/4.png', title: 'THE ART OF TOUCH', time: '16:00 - 18:00', description: 'Hands-on experience and interactive sessions.' },
+    { src: '/agenda/5.png', title: 'THE LIVING PORTRAIT', time: '18:00 - 18:30', description: 'Closing remarks and farewell.' },
   ]
 
   useEffect(() => {

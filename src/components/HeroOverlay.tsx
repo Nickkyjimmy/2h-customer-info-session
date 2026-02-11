@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion, useTransform, useScroll, useMotionValueEvent, useSpring } from 'framer-motion'
 
-export default function HeroOverlay({ isVisible }: { isVisible: boolean }) {
+export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { isVisible: boolean; isMiniGameVisible?: boolean }) {
   const { scrollY } = useScroll()
   const [activeId, setActiveId] = useState('')
   
@@ -134,6 +134,8 @@ export default function HeroOverlay({ isVisible }: { isVisible: boolean }) {
         <motion.div 
            style={{ x: xContent, y: yContent, scale: scaleContent, willChange: 'transform' }}
            className="relative z-10 p-5 md:p-6 origin-bottom-left"
+           animate={{ opacity: isMiniGameVisible ? 0 : 1 }}
+           transition={{ duration: 0.5, ease: "easeOut" }}
         >
           {/* Container for swapping bottom content */}
           <div className="relative">

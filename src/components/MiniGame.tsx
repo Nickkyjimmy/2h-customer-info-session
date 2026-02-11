@@ -95,9 +95,11 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
   const selectedCardRef = useRef<HTMLDivElement | null>(null);
   const skipHideActionRef = useRef<(() => void) | null>(null);
   const hideSelectedCardRef = useRef<(() => void) | null>(null);
+  const hasInitializedRef = useRef(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || hasInitializedRef.current) return;
+    hasInitializedRef.current = true;
 
     // Register CustomEase
     CustomEase.create(
@@ -144,12 +146,12 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
       if (items.length === 0) return;
 
       const firstItem = items[0] as HTMLElement;
-      const totalItemsWidth = (items.length - 1) * 10 + firstItem.offsetWidth;
+      const totalItemsWidth = (items.length - 1) * 30 + firstItem.offsetWidth;
       const startX = (container1.offsetWidth - totalItemsWidth) / 2;
 
       items.forEach((item, index) => {
         gsap.set(item, {
-          left: `${startX + index * 10}px`,
+          left: `${startX + index * 30}px`,
           top: "150%",
           rotation: 0,
         });
@@ -202,7 +204,7 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
     const setCircularLayout = () => {
       const items = gallery1.querySelectorAll(".item");
       const angleIncrement = (2 * Math.PI) / ITEMS_COUNT;
-      const radius = 200;
+      const radius = 580;
       const centerX = container1.offsetWidth / 2;
       const centerY = container1.offsetHeight / 2;
 
@@ -276,7 +278,7 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
 
       const config = {
         imageCount: ITEMS_COUNT,
-        radius: 275,
+        radius: 580,
         sensitivity: 500,
         effectFalloff: 250,
         cardMoveAmount: 50,
@@ -890,7 +892,7 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
   }, [attendanceId]); // Re-run if attendanceId changes (though it shouldn't)
 
   return (
-    <div className="relative w-full h-screen bg-[#e3e3db] text-[#1f1f1f] overflow-hidden">
+    <div className="relative w-full h-screen bg-[#D4C89A] text-[#1f1f1f] overflow-hidden">
       {/* Animation 1: Linear to Circular */}
       <div
         ref={container1Ref}
@@ -1025,28 +1027,30 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
           height: 100%;
           display: flex;
           justify-content: center;
-          align-items: center;
+          align-items: flex-end; /* Align to bottom */
           transform-style: preserve-3d;
           perspective: 2000px;
           will-change: transform;
+          padding-bottom: 0; /* Adjust if needed */
         }
 
         .gallery {
           position: relative;
-          width: 600px;
-          height: 600px;
+          width: 1080px; 
+          height: 1080px;
           display: flex;
           justify-content: center;
           align-items: center;
           transform-origin: center;
           will-change: transform;
+          transform: translateY(50%); /* Move half of it off-screen at bottom */
         }
 
         .card {
           position: absolute;
-          width: 45px;
-          height: 70px;
-          border-radius: 4px;
+          width: 134px;
+          height: 198px;
+          border-radius: 10px;
           transform-origin: center;
           will-change: transform;
           transform-style: preserve-3d;
@@ -1054,8 +1058,8 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
           overflow: hidden;
           top: 50%;
           left: 50%;
-          margin-top: -35px;
-          margin-left: -22.5px;
+          margin-top: -99px;
+          margin-left: -67px;
         }
 
         .card-front,
@@ -1103,7 +1107,7 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
           border: 2px solid #000 !important;
           overflow: hidden;
           backface-visibility: visible !important;
-          min-height: 70px !important;
+          min-height: 198px !important;
           opacity: 1 !important;
           visibility: visible !important;
         }
@@ -1131,12 +1135,10 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
 
         .title-container {
           position: absolute;
-          bottom: 25%;
+          top: 20%; /* Move to top since circle is at bottom */
           left: 50%;
           transform: translateX(-50%);
           width: 100%;
-          height: 42px;
-          clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
           display: flex;
           justify-content: center;
           align-items: center;
@@ -1159,9 +1161,9 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
 
         .item {
           position: absolute;
-          width: 45px;
-          height: 70px;
-          border-radius: 4px;
+          width: 134px;
+          height: 198px;
+          border-radius: 10px;
           transform-origin: center;
           will-change: transform;
           transform-style: preserve-3d;

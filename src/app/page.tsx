@@ -11,6 +11,7 @@ import MiniGame from '@/components/MiniGame'
 export default function Home() {
   const [isContentLoaded, setIsContentLoaded] = useState(false)
   const [attendanceId, setAttendanceId] = useState<string | null>(null)
+  const [isMiniGameVisible, setIsMiniGameVisible] = useState(false)
   const miniGameRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -20,6 +21,21 @@ export default function Home() {
       setAttendanceId(storedId)
     }
   }, [])
+
+  useEffect(() => {
+    if (!attendanceId || !miniGameRef.current) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsMiniGameVisible(entry.isIntersecting)
+      },
+      { threshold: 0.2 } // Trigger when 20% of MiniGame is visible
+    )
+
+     observer.observe(miniGameRef.current)
+
+    return () => observer.disconnect()
+  }, [attendanceId])
 
   const handleCheckInSuccess = (id: string) => {
     setAttendanceId(id)
@@ -32,7 +48,7 @@ export default function Home() {
 
   return (
     <main className="bg-black">
-      <HeroOverlay isVisible={isContentLoaded} />
+      <HeroOverlay isVisible={isContentLoaded} isMiniGameVisible={isMiniGameVisible} />
       <AgendaTransitionOverlay />
       <KeyboardScroll onLoadComplete={() => setIsContentLoaded(true)} />
       
