@@ -63,7 +63,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
 
   const contentVariants = {
     initial: { x: '0px', y: '0px', scale: 1 },
-    final: { x: '28vw', y: '18vh', scale: 0.85, transition: { duration: 1.5, ease: "easeInOut" } as const }
+    final: { x: '-28vw', y: '18vh', scale: 0.85, transition: { duration: 1.5, ease: "easeInOut" } as const }
   }
 
   const opacityVariantsInitial = {
