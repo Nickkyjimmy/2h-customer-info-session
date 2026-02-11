@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
 import { CustomEase } from "gsap/CustomEase";
@@ -37,6 +38,10 @@ const CARD_COUNT = collection.length > 0 ? collection.length : defaultCollection
 const cardData = collection.length > 0 ? collection : defaultCollection;
 
 export default function ShuffleCardPage() {
+  const params = useParams();
+  const router = useRouter();
+  const attendanceId = params.id as string;
+
   const container1Ref = useRef<HTMLDivElement>(null);
   const gallery1Ref = useRef<HTMLDivElement>(null);
   const loaderRef = useRef<HTMLDivElement>(null);
@@ -339,10 +344,58 @@ export default function ShuffleCardPage() {
           currentY: 0,
         });
 
-        card.addEventListener("click", (e) => {
+        card.addEventListener("click", async (e) => {
           if (!isPreviewActiveRef.current && !isTransitioningRef.current) {
-            togglePreview(parseInt(card.dataset.index || "0"));
             e.stopPropagation();
+            
+            // Prevent multiple clicks
+            isTransitioningRef.current = true;
+            
+            try {
+              // Call the draw API
+              const response = await fetch('/api/mini-game/draw', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ attendanceId }),
+              });
+              
+              if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to draw card');
+              }
+              
+              const data = await response.json();
+              
+              if (data.card) {
+                // Update card asset with the drawn card
+                const cardImage = `/card-asset/${data.card.name}.png`;
+                console.log('Drawn card:', data.card.name);
+                
+                // Update dataset for the preview
+                card.dataset.cardAsset = cardImage;
+                card.dataset.title = data.card.name;
+                card.dataset.name = data.card.name;
+
+                // Preload the image to prevent flickering
+                const img = new Image();
+                img.src = cardImage;
+                await new Promise((resolve) => {
+                  img.onload = resolve;
+                  img.onerror = resolve; // Continue even if error
+                });
+              }
+
+              // Reset executing flag because togglePreview sets it again
+              isTransitioningRef.current = false;
+              togglePreview(parseInt(card.dataset.index || "0"));
+
+            } catch (error) {
+              console.error('Error drawing card:', error);
+              isTransitioningRef.current = false;
+              alert('Failed to draw card. Please try again.');
+            }
           }
         });
       }
