@@ -62,7 +62,7 @@ export default function AgendaGallery() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full"
+      className="agenda-gallery-section relative w-full"
       style={{ height: `${agendaItems.length * 100}vh` }}
     >
       {/* Sticky viewport */}

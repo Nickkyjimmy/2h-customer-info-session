@@ -92,7 +92,7 @@ const Scene = ({ images, scrollYProgress }: { images: HTMLImageElement[], scroll
   )
 }
 
-export default function KeyboardScroll() {
+export default function KeyboardScroll({ onLoadComplete }: { onLoadComplete?: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [images, setImages] = useState<HTMLImageElement[]>([])
   const [loadingProgress, setLoadingProgress] = useState(0)
@@ -123,9 +123,10 @@ export default function KeyboardScroll() {
       loadedCount++
       setLoadingProgress(Math.round((loadedCount / FRAME_COUNT) * 100))
       
-      // Start experience after initial batch is ready
-      if (loadedCount === INITIAL_LOAD_COUNT) {
+      // Only show experience when ALL frames are loaded
+      if (loadedCount === FRAME_COUNT) {
         setIsLoaded(true)
+        onLoadComplete?.()
       }
     }
 
