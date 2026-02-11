@@ -7,9 +7,11 @@ import HeroOverlay from '@/components/HeroOverlay'
 import AgendaTransitionOverlay from '@/components/AgendaTransitionOverlay'
 import CheckInForm from '@/components/CheckInForm'
 import MiniGame from '@/components/MiniGame'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function Home() {
   const [isContentLoaded, setIsContentLoaded] = useState(false)
+  const [loadingProgress, setLoadingProgress] = useState(0)
   const [attendanceId, setAttendanceId] = useState<string | null>(null)
   const [isMiniGameVisible, setIsMiniGameVisible] = useState(false)
   const miniGameRef = useRef<HTMLDivElement>(null)
@@ -48,9 +50,54 @@ export default function Home() {
 
   return (
     <main className="bg-black">
+      {/* Global Loader */}
+      <AnimatePresence>
+        {!isContentLoaded && (
+          <motion.div 
+            className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
+            exit={{ opacity: 0, transition: { duration: 1 } }}
+          >
+             {/* Loader Card matching HeroOverlay dimensions */}
+             <div className="relative w-[340px] md:w-[420px] h-[560px] flex flex-col items-center justify-center p-6">
+                
+                {/* Static Faint Border */}
+                <div className="absolute inset-0 border border-white/10" />
+                
+                {/* Animated Progress Border */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                  <motion.rect
+                    width="100%"
+                    height="100%"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="2"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: loadingProgress / 100 }}
+                    transition={{ ease: "linear", duration: 0.1 }}
+                    className="drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+                  />
+                </svg>
+                
+                {/* Percentage Text */}
+                <div className="flex flex-col items-center gap-4">
+                    <span className="text-white font-mono text-4xl font-bold tracking-tighter">
+                        {loadingProgress}%
+                    </span>
+                    <span className="text-white/50 text-xs uppercase tracking-widest animate-pulse">
+                        Loading Experience
+                    </span>
+                </div>
+             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <HeroOverlay isVisible={isContentLoaded} isMiniGameVisible={isMiniGameVisible} />
       <AgendaTransitionOverlay />
-      <KeyboardScroll onLoadComplete={() => setIsContentLoaded(true)} />
+      <KeyboardScroll 
+          onLoadComplete={() => setIsContentLoaded(true)} 
+          onProgress={setLoadingProgress}
+      />
       
       {/* Agenda Gallery Section */}
       <AgendaGallery />
@@ -65,13 +112,6 @@ export default function Home() {
         </div>
       )}
       
-      {/* Additional content below */}
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-black to-gray-900">
-        <div className="text-center text-white">
-          <h1 className="text-5xl font-bold mb-4">2h Customer Info Session</h1>
-          <p className="text-xl text-gray-400">Scroll up to see the keyboard animation</p>
-        </div>
-      </div>
     </main>
   )
 }

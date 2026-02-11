@@ -92,10 +92,9 @@ const Scene = ({ images, scrollYProgress }: { images: HTMLImageElement[], scroll
   )
 }
 
-export default function KeyboardScroll({ onLoadComplete }: { onLoadComplete?: () => void }) {
+export default function KeyboardScroll({ onLoadComplete, onProgress }: { onLoadComplete?: () => void, onProgress?: (p: number) => void }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [images, setImages] = useState<HTMLImageElement[]>([])
-  const [loadingProgress, setLoadingProgress] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
 
   const { scrollYProgress } = useScroll({
@@ -110,9 +109,6 @@ export default function KeyboardScroll({ onLoadComplete }: { onLoadComplete?: ()
     restDelta: 0.0001
   })
 
-  // Wipe transition removed
-  // Fade out removed
-
   // Optimized progressive image loading
   useEffect(() => {
     const loadedImages: HTMLImageElement[] = new Array(FRAME_COUNT)
@@ -121,7 +117,8 @@ export default function KeyboardScroll({ onLoadComplete }: { onLoadComplete?: ()
 
     const updateProgress = (isInitialBatch = false) => {
       loadedCount++
-      setLoadingProgress(Math.round((loadedCount / FRAME_COUNT) * 100))
+      const progress = Math.round((loadedCount / FRAME_COUNT) * 100)
+      onProgress?.(progress)
       
       // Only show experience when ALL frames are loaded
       if (loadedCount === FRAME_COUNT) {
@@ -207,14 +204,7 @@ export default function KeyboardScroll({ onLoadComplete }: { onLoadComplete?: ()
             </Canvas>
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black">
-             {/* Loading UI */}
-            <div className="w-64 h-2 bg-gray-800 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-white transition-all duration-300"
-                style={{ width: `${loadingProgress}%` }}
-              />
-            </div>
-            <p className="mt-4 text-white font-mono text-sm">Loading Experience {loadingProgress}%</p>
+             {/* Internal Loading UI removed in favor of Global Loader */}
           </div>
         )}
       </div>

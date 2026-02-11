@@ -7,6 +7,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
   const { scrollY } = useScroll()
   const [activeId, setActiveId] = useState('')
   const [hasTransitioned, setHasTransitioned] = useState(false)
+  const [isPastGallery, setIsPastGallery] = useState(false)
 
   // Scroll-based transition effect
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -31,24 +32,35 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
   // Scroll to section handler
   const scrollToSection = (index: number) => {
       const heroHeight = window.innerHeight * 3 // 300vh hero
-      const targetY = heroHeight + (index * window.innerHeight)
+      const itemHeight = window.innerHeight * 0.5 // 50vh per item
+      const targetY = heroHeight + (index * itemHeight) + 10
       window.scrollTo({ top: targetY, behavior: 'smooth' })
   }
 
-  // Track scroll to determine active section
+  // Track scroll to determine active section and visibility
   useMotionValueEvent(scrollY, "change", (latest) => {
       if (typeof window === 'undefined') return
       
       const heroHeight = window.innerHeight * 3
+      const itemHeight = window.innerHeight * 0.5
+      const galleryEnd = heroHeight + (agendaList.length * itemHeight)
+
+      // Hide TOC if we've scrolled past the gallery
+      // Adding a small buffer so it fades out just as the last item is finishing
+      if (latest > galleryEnd - 100) {
+        if (!isPastGallery) setIsPastGallery(true)
+      } else {
+        if (isPastGallery) setIsPastGallery(false)
+      }
+
       if (latest < heroHeight) {
           setActiveId('')
           return
       }
 
       // Calculate active index based on scroll position
-      // We add half viewport height to trigger the next slide when it's mostly visible
-      const galleryScroll = latest - heroHeight + (window.innerHeight / 2)
-      const index = Math.floor(galleryScroll / window.innerHeight)
+      const galleryScroll = latest - heroHeight + (itemHeight / 2)
+      const index = Math.floor(galleryScroll / itemHeight)
       const safeIndex = Math.min(Math.max(0, index), agendaList.length - 1)
       setActiveId(agendaList[safeIndex].id)
   })
@@ -57,13 +69,15 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
 
   // Variants for auto-transition
   const titleVariants = {
-    initial: { x: '0px', y: '0px', scale: 1 },
-    final: { x: '-28vw', y: '-22vh', scale: 0.85, transition: { duration: 1.5, ease: "easeInOut" } as const }
+    initial: { x: '0px', y: '0px', scale: 1, opacity: 1 },
+    final: { x: '-28vw', y: '-22vh', scale: 0.85, opacity: 1, transition: { duration: 1.5, ease: "easeInOut" } as const },
+    hidden: { opacity: 0, transition: { duration: 0.5 } } // Hide when past gallery
   }
 
   const contentVariants = {
-    initial: { x: '0px', y: '0px', scale: 1 },
-    final: { x: '-28vw', y: '18vh', scale: 0.85, transition: { duration: 1.5, ease: "easeInOut" } as const }
+    initial: { x: '0px', y: '0px', scale: 1, opacity: 1 },
+    final: { x: '-28vw', y: '18vh', scale: 0.85, opacity: 1, transition: { duration: 1.5, ease: "easeInOut" } as const },
+    hidden: { opacity: 0, transition: { duration: 0.5 } }
   }
 
   const opacityVariantsInitial = {
@@ -101,7 +115,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
         {/* Top Section: Title & Changing Text */}
         <motion.div 
           initial="initial"
-          animate={hasTransitioned ? "final" : "initial"}
+          animate={isMiniGameVisible ? "hidden" : (hasTransitioned ? "final" : "initial")}
           variants={titleVariants}
           className="relative z-10 p-5 md:p-6 origin-top-left"
         >
@@ -150,7 +164,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
         {/* Bottom Section - Event Details <=> Agenda List */}
         <motion.div 
            initial="initial"
-           animate={isMiniGameVisible ? { opacity: 0 } : (hasTransitioned ? "final" : "initial")}
+           animate={isPastGallery || isMiniGameVisible ? "hidden" : (hasTransitioned ? "final" : "initial")}
            variants={contentVariants}
            className="relative z-10 p-5 md:p-6 origin-bottom-left"
            transition={{ duration: isMiniGameVisible ? 0.5 : 1.5, ease: "easeOut" }}

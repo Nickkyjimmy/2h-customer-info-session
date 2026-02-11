@@ -112,7 +112,7 @@ export default function AgendaGallery() {
 
                             {/* Right Side: Visuals for Special Items */}
                             <div className="relative h-full flex items-center justify-center">
-                                {specialTitles.includes(item.title) && (
+                                {(item.title === 'FINDING THE MUSE' || item.title === 'THE ART OF TOUCH') && (
                                      <motion.div
                                         initial={{ opacity: 0, x: 50, rotate: 5 }}
                                         animate={{ opacity: 1, x: 0, rotate: 0 }}
@@ -122,8 +122,7 @@ export default function AgendaGallery() {
                                         <Image
                                             src={
                                               item.title === 'FINDING THE MUSE' ? '/agenda/agenda-find-the-muse.png' :
-                                              item.title === 'THE ART OF TOUCH' ? '/agenda/agenda-the-art-of-touch.png' :
-                                              '/card-asset/rare.png'
+                                              '/agenda/agenda-the-art-of-touch.png'
                                             }
                                             alt={item.title}
                                             fill
