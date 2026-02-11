@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
 import { CustomEase } from "gsap/CustomEase";
+import confetti from "canvas-confetti";
 
 // Mock collection data since the original file import is missing
 // Card asset images from public/card-asset
@@ -400,7 +401,7 @@ export default function ShuffleCardPage() {
         previewContainer.style.position = "fixed";
         previewContainer.style.top = "50%";
         previewContainer.style.left = "50%";
-        previewContainer.style.transform = "translate(-50%, -50%)";
+        previewContainer.style.transform = "translate(-50%, -50%) scale(0.5)";
         previewContainer.style.zIndex = "1000";
         previewContainer.style.width = "300px";
         previewContainer.style.height = "450px";
@@ -412,28 +413,45 @@ export default function ShuffleCardPage() {
         previewContainer.style.boxShadow = "0 10px 40px rgba(0,0,0,0.5)";
         previewContainer.style.opacity = "0";
         
-        // Add member name to preview
-        const previewName = document.createElement("div");
-        previewName.textContent = selectedCard.dataset.name || "";
-        previewName.style.position = "absolute";
-        previewName.style.bottom = "20px";
-        previewName.style.left = "50%";
-        previewName.style.transform = "translateX(-50%)";
-        previewName.style.color = "#fff";
-        previewName.style.fontSize = "24px";
-        previewName.style.fontWeight = "bold";
-        previewName.style.textShadow = "0 2px 8px rgba(0,0,0,0.9)";
-        previewName.style.textAlign = "center";
-        previewName.style.width = "90%";
-        previewContainer.appendChild(previewName);
-        
         document.body.appendChild(previewContainer);
         
-        // Animate preview in
+        // Animate preview in with delay
         gsap.to(previewContainer, {
           opacity: 1,
-          duration: 0.5,
-          ease: "power2.out"
+          scale: 1,
+          delay: 1, // 1 second delay before revealing
+          duration: 0.8,
+          ease: "back.out(1.2)",
+          onComplete: () => {
+            // Trigger side cannons confetti when card is fully revealed
+            const end = Date.now() + 3 * 1000; // 3 seconds
+            const colors = ["#a786ff", "#fd8bbc", "#eca184", "#f8deb1"];
+
+            const frame = () => {
+              if (Date.now() > end) return;
+
+              confetti({
+                particleCount: 2,
+                angle: 60,
+                spread: 55,
+                startVelocity: 60,
+                origin: { x: 0, y: 0.5 },
+                colors: colors,
+              });
+              confetti({
+                particleCount: 2,
+                angle: 120,
+                spread: 55,
+                startVelocity: 60,
+                origin: { x: 1, y: 0.5 },
+                colors: colors,
+              });
+
+              requestAnimationFrame(frame);
+            };
+
+            frame();
+          }
         });
         
         // Store reference for cleanup
