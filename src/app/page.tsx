@@ -7,6 +7,7 @@ import HeroOverlay from '@/components/HeroOverlay'
 import AgendaTransitionOverlay from '@/components/AgendaTransitionOverlay'
 import CheckInForm from '@/components/CheckInForm'
 import MiniGame from '@/components/MiniGame'
+import OutroScroll from '@/components/OutroScroll'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function Home() {
@@ -111,6 +112,9 @@ export default function Home() {
           <MiniGame attendanceId={attendanceId} />
         </div>
       )}
+      
+      {/* Outro Section */}
+      <OutroScroll />
       
     </main>
   )
