@@ -42,6 +42,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
       { id: 'V', title: 'THE SACRED VOW' },
       { id: 'VI', title: 'MASTERPIECE CREATORS' },
       { id: 'VII', title: 'THE ART OF TOUCH' },
+      { id: 'VIII', title: 'THE LIVING PORTRAIT' },
   ]
 
   // Scroll to section handler
