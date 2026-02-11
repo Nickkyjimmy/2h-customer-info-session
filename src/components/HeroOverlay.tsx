@@ -32,8 +32,11 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
   // Scroll to section handler
   const scrollToSection = (index: number) => {
       const heroHeight = window.innerHeight * 3 // 300vh hero
-      const itemHeight = window.innerHeight * 0.5 // 50vh per item
-      const targetY = heroHeight + (index * itemHeight) + 10
+      const galleryHeight = agendaList.length * window.innerHeight * 0.5 // 50vh per item
+      const scrollableDistance = galleryHeight - window.innerHeight
+      
+      // Target the start of the section's "slot" plus a small buffer
+      const targetY = heroHeight + (index / agendaList.length) * scrollableDistance + 5
       window.scrollTo({ top: targetY, behavior: 'smooth' })
   }
 
@@ -42,12 +45,13 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
       if (typeof window === 'undefined') return
       
       const heroHeight = window.innerHeight * 3
-      const itemHeight = window.innerHeight * 0.5
-      const galleryEnd = heroHeight + (agendaList.length * itemHeight)
+      const galleryHeight = agendaList.length * window.innerHeight * 0.5
+      const galleryEnd = heroHeight + galleryHeight
+      const scrollableDistance = galleryHeight - window.innerHeight
 
       // Hide TOC if we've scrolled past the gallery
-      // Adding a small buffer so it fades out just as the last item is finishing
-      if (latest > galleryEnd - 100) {
+      // Use galleryEnd - window.innerHeight to trigger right at the end of valid content
+      if (latest > galleryEnd - window.innerHeight) {
         if (!isPastGallery) setIsPastGallery(true)
       } else {
         if (isPastGallery) setIsPastGallery(false)
@@ -58,11 +62,17 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
           return
       }
 
-      // Calculate active index based on scroll position
-      const galleryScroll = latest - heroHeight + (itemHeight / 2)
-      const index = Math.floor(galleryScroll / itemHeight)
-      const safeIndex = Math.min(Math.max(0, index), agendaList.length - 1)
-      setActiveId(agendaList[safeIndex].id)
+      // Calculate active index consistent with AgendaGallery logic
+      // Progress = (current - start) / total_scrollable
+      const currentGalleryScroll = latest - heroHeight
+      const progress = Math.max(0, Math.min(1, currentGalleryScroll / scrollableDistance))
+      
+      const index = Math.min(
+        Math.max(0, Math.floor(progress * agendaList.length)),
+        agendaList.length - 1
+      )
+      
+      setActiveId(agendaList[index].id)
   })
 
   if (!isVisible) return null
