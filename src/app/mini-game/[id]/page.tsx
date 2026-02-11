@@ -3,9 +3,23 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import gsap from "gsap";
-import { Flip } from "gsap/Flip";
-import { CustomEase } from "gsap/CustomEase";
+import { Flip, CustomEase } from "gsap/all";
 import confetti from "canvas-confetti";
+
+const COMMON_MESSAGES = [
+  "Mở bát nhẹ nhàng, hy vọng đây là bước đệm cho những siêu phẩm sắp tới",
+  "Khởi đầu suôn sẻ! Hy vọng đây là tín hiệu cho một chuỗi may mắn sắp tới.",
+  "Mở bát nhẹ nhàng, niềm vui lan tỏa. Chúc mừng bạn!",
+  "Cứ tích lũy dần dần, ngày huy hoàng không còn xa đâu. Chúc mừng nhé!",
+  "Vạn sự khởi đầu nan, có tấm này làm nền thì sau này đánh đâu thắng đó!"
+];
+
+const RARE_MESSAGES = [
+  "Hào quang tỏa sáng rồi! Chúc mừng bạn đã sở hữu được một cực phẩm hiếm có.",
+  "Đúng là báu vật! Không phải ai cũng có duyên để sở hữu tấm thẻ này đâu.",
+  "Nhìn là biết đẳng cấp rồi! Chúc mừng bạn đã rinh về một siêu phẩm.",
+  "Một sự bổ sung không thể chất lượng hơn. Chúc mừng bạn nhé!"
+];
 
 // Mock collection data since the original file import is missing
 // Card asset images from public/card-asset
@@ -52,6 +66,7 @@ export default function ShuffleCardPage() {
   
   const [isAnimation2Active, setIsAnimation2Active] = useState(false);
   const [showSkipButton, setShowSkipButton] = useState(false);
+  const [isDrawing, setIsDrawing] = useState(false);
   interface TransformState {
     angle: number;
     targetRotation: number;
@@ -350,6 +365,7 @@ export default function ShuffleCardPage() {
             
             // Prevent multiple clicks
             isTransitioningRef.current = true;
+            setIsDrawing(true);
             
             try {
               // Call the draw API
@@ -389,11 +405,13 @@ export default function ShuffleCardPage() {
 
               // Reset executing flag because togglePreview sets it again
               isTransitioningRef.current = false;
+              setIsDrawing(false);
               togglePreview(parseInt(card.dataset.index || "0"));
 
             } catch (error) {
               console.error('Error drawing card:', error);
               isTransitioningRef.current = false;
+              setIsDrawing(false);
               alert('Failed to draw card. Please try again.');
             }
           }
@@ -467,6 +485,60 @@ export default function ShuffleCardPage() {
         previewContainer.style.opacity = "0";
         
         document.body.appendChild(previewContainer);
+
+        // Add header message
+        const headerDiv = document.createElement("div");
+        headerDiv.className = "card-header-message";
+        headerDiv.textContent = '"Customer 2h gửi đến bạn"';
+        Object.assign(headerDiv.style, {
+          position: "absolute",
+          bottom: "105%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "120%", 
+          textAlign: "center",
+          color: "#ff69b4",
+          fontSize: "1.3rem",
+          fontWeight: "700",
+          opacity: "0",
+          pointerEvents: "none",
+          zIndex: "1001"
+        });
+        previewContainer.appendChild(headerDiv);
+
+        // Add shuffle message
+        const cardName = selectedCard.dataset.name || "";
+        const isRare = cardName.toLowerCase().includes("rare");
+        const messages = isRare ? RARE_MESSAGES : COMMON_MESSAGES;
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+
+        const messageDiv = document.createElement("div");
+        messageDiv.className = "card-message";
+        messageDiv.textContent = randomMessage;
+        Object.assign(messageDiv.style, {
+          position: "absolute",
+          top: "105%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "120%", 
+          textAlign: "center",
+          color: "#000",
+          fontSize: "1.1rem",
+          fontWeight: "600",
+          opacity: "0",
+          pointerEvents: "none"
+        });
+        previewContainer.appendChild(messageDiv);
+
+        // Animate messages in
+        gsap.to([messageDiv, headerDiv], {
+          opacity: 1,
+          y: 10,
+          duration: 0.8,
+          delay: 1.8, 
+          ease: "power2.out",
+          stagger: 0.2
+        });
         
         // Animate preview in with delay
         gsap.to(previewContainer, {
@@ -560,23 +632,7 @@ export default function ShuffleCardPage() {
           },
         });
 
-        // Title Animation
-        const titleText = currentCards[index].dataset.name || currentCards[index].dataset.title || "";
-        const p = document.createElement("p");
-        p.textContent = titleText;
-        if (titleContainer) {
-          titleContainer.appendChild(p);
-        }
-        currentTileRef.current = p;
 
-        gsap.set(p, { opacity: 0, y: 20 });
-        gsap.to(p, {
-          opacity: 1,
-          y: 0,
-          duration: 0.75,
-          delay: 1.25,
-          ease: "power4.out",
-        });
       }
 
       const hideSelectedCard = () => {
@@ -638,21 +694,7 @@ export default function ShuffleCardPage() {
         
         selectedCardRef.current = null;
         
-        // Remove title
-        if (currentTileRef.current) {
-          gsap.to(currentTileRef.current, {
-            opacity: 0,
-            y: -20,
-            duration: 0.5,
-            ease: "power4.out",
-            onComplete: () => {
-              if (currentTileRef.current) {
-                currentTileRef.current.remove();
-                currentTileRef.current = null;
-              }
-            },
-          });
-        }
+
       };
 
       // skipHideAction removed
@@ -684,21 +726,7 @@ export default function ShuffleCardPage() {
             ease: "power2.inOut",
         });
 
-        if (currentTileRef.current) {
-          gsap.to(currentTileRef.current, {
-            opacity: 0,
-            y: -20,
-            duration: 0.75,
-            delay: 0.5,
-            ease: "power4.out",
-            onComplete: () => {
-              if (currentTileRef.current) {
-                currentTileRef.current.remove();
-                currentTileRef.current = null;
-              }
-            },
-          });
-        }
+
 
         const viewportWidth = window.innerWidth;
         let galleryScale = 1;
@@ -922,6 +950,16 @@ export default function ShuffleCardPage() {
         >
           Skip
         </button>
+      )}
+
+      {/* Drawing Loading State */}
+      {isDrawing && (
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin"></div>
+            <p className="text-white font-bold tracking-widest uppercase">Drawing Card...</p>
+          </div>
+        </div>
       )}
 
       <footer>
