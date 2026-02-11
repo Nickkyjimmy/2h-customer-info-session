@@ -7,7 +7,7 @@ import * as THREE from 'three'
 
 
 const FRAME_COUNT = 240
-const FRAME_PATH = '/hero-animation/{i}.png'
+const FRAME_PATH = '/hero-animation/{i}.webp'
 
 const Scene = ({ images, scrollYProgress }: { images: HTMLImageElement[], scrollYProgress: MotionValue<number> }) => {
   const meshRef = useRef<THREE.Mesh>(null)
