@@ -1,17 +1,16 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import Image from 'next/image'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion'
+import { cn } from '@/lib/utils' // Assuming you have a util for classnames, if not standard template literal is fine.
 
-gsap.registerPlugin(ScrollTrigger)
+// Helper for conditional classnames if cn util doesn't exist
+const classNames = (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' ')
 
 export default function AgendaGallery() {
-  const containerRef = useRef<HTMLElement>(null)
-  const viewportRef = useRef<HTMLDivElement>(null)
-  const trackRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [activeIndex, setActiveIndex] = useState(0)
 
   const agendaItems = [
     { src: '/agenda/4.png', title: 'CHECK IN', description: 'Welcoming guests, registration, and networking.' },
@@ -26,160 +25,153 @@ export default function AgendaGallery() {
 
   const specialTitles = ['FINDING THE MUSE', 'THE ART OF TOUCH', 'THE LIVING PORTRAIT']
 
-  useEffect(() => {
-    const container = containerRef.current
-    const track = trackRef.current
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end']
+  })
 
-    if (!container || !track) return
-
-    const totalSlides = agendaItems.length
-
-    // Create the horizontal scroll animation
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: container,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 1,
-        snap: {
-          snapTo: 1 / (totalSlides - 1),
-          duration: { min: 0.2, max: 0.5 },
-          delay: 0,
-          ease: 'power1.inOut'
-        }
-      },
-    })
-
-    // Move the entire track to the left
-    tl.to(track, {
-      xPercent: -((totalSlides - 1) * 100) / totalSlides,
-      ease: 'none',
-      duration: 1,
-    })
-
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    // Map scroll progress (0-1) to discrete index (0 to length-1)
+    const index = Math.min(
+      Math.max(0, Math.floor(latest * agendaItems.length)),
+      agendaItems.length - 1
+    )
+    if (index !== activeIndex) {
+      setActiveIndex(index)
     }
-  }, [agendaItems.length])
+  })
 
   return (
     <section
       ref={containerRef}
-      className="agenda-gallery-section relative w-full"
-      style={{ height: `${agendaItems.length * 100}vh` }}
+      className="agenda-gallery-section relative w-full bg-black"
+      // Height determines scroll speed - 400vh gives ample time per slide
+      style={{ height: `${agendaItems.length * 50}vh` }} 
     >
-      {/* Sticky viewport */}
-      <div
-        ref={viewportRef}
-        className="sticky top-0 w-full h-screen overflow-hidden"
-      >
-        {/* Horizontal track - moves with scroll */}
-        <div
-          ref={trackRef}
-          className="flex h-full will-change-transform"
-          style={{ width: `${agendaItems.length * 100}vw` }}
-        >
-          {agendaItems.map((item, index) => (
-            <div
-              key={index}
-              className="relative flex-shrink-0 w-screen h-full"
-            >
-              <Image
-                src={item.src}
-                alt={item.title}
-                fill
-                className="object-cover"
-                sizes="100vw"
-                priority={index < 2}
-              />
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center">
+        
+        {/* Progress Indicator */}
+        <div className="absolute top-10 left-0 right-0 z-50 flex justify-center gap-2">
+            {agendaItems.map((_, idx) => (
+                <div 
+                    key={idx} 
+                    className={classNames(
+                        "h-1 rounded-full transition-all duration-300",
+                        idx === activeIndex ? "w-8 bg-white" : "w-2 bg-white/20"
+                    )}
+                />
+            ))}
+        </div>
 
-              {/* Centered Title and Description */}
-              <div className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none px-4 md:px-8">
-                <motion.div 
-                  className={`
-                    bg-black/20 backdrop-blur-[1px] p-6 md:p-10 rounded-xl border border-white/5
-                    ${specialTitles.includes(item.title) ? 'max-w-xl text-left' : 'text-center'}
-                  `}
-                  initial={specialTitles.includes(item.title) ? { x: 0 } : {}}
-                  whileInView={specialTitles.includes(item.title) ? { x: -300 } : {}}
-                  transition={{ duration: 1, delay: 1.5, ease: "easeInOut" }}
-                >
-                  <motion.h2
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                    className="text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-2 md:mb-4 tracking-tight uppercase"
-                    style={{
-                      textShadow: '0 4px 20px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 255, 255, 0.3)'
-                    }}
-                  >
-                    {item.title}
-                  </motion.h2>
+        {/* Carousel Container */}
+        <div className="relative w-full h-full">
+            <AnimatePresence mode="popLayout">
+                {agendaItems.map((item, index) => index === activeIndex && (
+                    <motion.div
+                        key={index}
+                        className="absolute inset-0 w-full h-full flex items-center justify-center bg-transparent"
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+                        transition={{ duration: 0.5, ease: "circOut" }}
+                    >
+                        {/* Background Image / Main Visual */}
+                        <div className="absolute inset-0 z-0">
+                           <div className="absolute inset-0 bg-black/20 z-10" /> {/* Overlay for readability */}
+                           <Image
+                                src={item.src}
+                                alt={item.title}
+                                fill
+                                className="object-cover opacity-60"
+                                priority
+                           />
+                        </div>
 
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-                    className="text-base md:text-lg text-white/80 font-light max-w-2xl leading-relaxed mt-2 font-[family-name:var(--font-inter-tight)]"
-                    style={{
-                      textShadow: '0 2px 10px rgba(0, 0, 0, 0.8)'
-                    }}
-                  >
-                    {item.description}
-                  </motion.p>
-                </motion.div>
+                        {/* Content Layer */}
+                        <div className="relative z-40 w-full max-w-7xl px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full">
+                            
+                            {/* Left Side: Text */}
+                            <div className="flex flex-col justify-center text-left space-y-6 md:pl-10">
+                                <motion.h2 
+                                    className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9]"
+                                    initial={{ x: -50, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.2, duration: 0.8 }}
+                                >
+                                    {item.title}
+                                </motion.h2>
+                                <motion.p 
+                                    className="text-lg md:text-xl text-white/80 font-light max-w-md leading-relaxed"
+                                    initial={{ x: -30, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.4, duration: 0.8 }}
+                                >
+                                    {item.description}
+                                </motion.p>
+                            </div>
 
-                {/* Special Layout for Special Titles: Right Image */}
-                {specialTitles.includes(item.title) && (
-                  <motion.div
-                    initial={{ opacity: 0, x: 100 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 1, delay: 1.5, ease: "easeInOut" }}
-                    className="absolute right-[30%] w-[300px] h-[450px] md:w-[300px] md:h-[600px] hidden md:block"
-                  >
-                     <Image
-                        src={
-                          item.title === 'FINDING THE MUSE' ? '/agenda/agenda-find-the-muse.png' :
-                          item.title === 'THE ART OF TOUCH' ? '/agenda/agenda-the-art-of-touch.png' :
-                          '/card-asset/rare.png'
-                        }
-                        alt={item.title}
-                        fill
-                        className="object-contain drop-shadow-[0_0_30px_rgba(255,215,0,0.5)] "
-                     />
-                  </motion.div>
-                )}
-              </div>
+                            {/* Right Side: Visuals for Special Items */}
+                            <div className="relative h-full flex items-center justify-center">
+                                {specialTitles.includes(item.title) && (
+                                     <motion.div
+                                        initial={{ opacity: 0, x: 50, rotate: 5 }}
+                                        animate={{ opacity: 1, x: 0, rotate: 0 }}
+                                        transition={{ duration: 0.8, delay: 0.3 }}
+                                        className="relative w-[300px] h-[450px] md:w-[400px] md:h-[600px]"
+                                     >
+                                        <Image
+                                            src={
+                                              item.title === 'FINDING THE MUSE' ? '/agenda/agenda-find-the-muse.png' :
+                                              item.title === 'THE ART OF TOUCH' ? '/agenda/agenda-the-art-of-touch.png' :
+                                              '/card-asset/rare.png'
+                                            }
+                                            alt={item.title}
+                                            fill
+                                            className="object-contain drop-shadow-[0_0_50px_rgba(255,255,255,0.2)]"
+                                        />
+                                     </motion.div>
+                                )}
+                            </div>
+                        </div>
 
-              {/* Female statue - Left side (even indices: 0, 2, 4...) */}
-              {index % 2 === 0 && (
-                <div className="absolute -left-50 -bottom-10 z-50 pointer-events-none h-[80vh] md:h-[95vh]">
-                  <Image
-                    src="/agenda/female-1.png"
-                    alt="Female statue"
-                    width={400}
-                    height={900}
-                    className="object-contain h-full w-auto"
-                    priority
-                  />
-                </div>
-              )}
+                        {/* Statues (Decorations) */}
+                        {index % 2 === 0 ? (
+                            <motion.div 
+                                className="absolute -left-10 bottom-0 z-50 pointer-events-none h-[60vh] md:h-[80vh] opacity-80"
+                                initial={{ x: -100, opacity: 0 }}
+                                animate={{ x: 0, opacity: 0.8 }}
+                                transition={{ duration: 1 }}
+                            >
+                                <Image
+                                    src="/agenda/female-1.png"
+                                    alt="Female statue"
+                                    width={400}
+                                    height={900}
+                                    className="object-contain h-full w-auto"
+                                    priority
+                                />
+                            </motion.div>
+                        ) : (
+                            <motion.div 
+                                className="absolute -right-10 bottom-0 z-50 pointer-events-none h-[60vh] md:h-[80vh] opacity-80"
+                                initial={{ x: 100, opacity: 0 }}
+                                animate={{ x: 0, opacity: 0.8 }}
+                                transition={{ duration: 1 }}
+                            >
+                                <Image
+                                    src="/agenda/male-1.png"
+                                    alt="Male statue"
+                                    width={400}
+                                    height={900}
+                                    className="object-contain h-full w-auto"
+                                    priority
+                                />
+                            </motion.div>
+                        )}
 
-              {/* Male statue - Right side (odd indices: 1, 3, 5...) */}
-              {index % 2 === 1 && (
-                <div className="absolute -left-50 -bottom-10 z-50 pointer-events-none h-[80vh] md:h-[95vh]">
-                  <Image
-                    src="/agenda/male-1.png"
-                    alt="Male statue"
-                    width={400}
-                    height={900}
-                    className="object-contain h-full w-auto"
-                    priority
-                  />
-                </div>
-              )}
-            </div>
-          ))}
+                    </motion.div>
+                ))}
+            </AnimatePresence>
         </div>
       </div>
     </section>
