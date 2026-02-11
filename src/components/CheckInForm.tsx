@@ -1,10 +1,16 @@
-'use client'
-
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { validateDomainWithError } from '@/lib/validators'
+
+type Location = 'HANOI' | 'HCM' | 'DANANG';
+
+interface Session {
+  id: string;
+  name: string;
+  quantities: number;
+}
 
 interface CheckInFormProps {
   onSuccess?: (id: string) => void
@@ -14,8 +20,33 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
   const router = useRouter()
   const [domain, setDomain] = useState('')
   const [questions, setQuestions] = useState('')
+  const [location, setLocation] = useState<Location | ''>('')
+  const [sessionId, setSessionId] = useState('')
+  const [sessions, setSessions] = useState<Session[]>([])
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    if (location) {
+      fetch(`/api/sessions?location=${location}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setSessions(data)
+          } else {
+            console.error('API Error:', data)
+            setSessions([])
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching sessions:', err)
+          setSessions([])
+        })
+    } else {
+      setSessions([])
+      setSessionId('')
+    }
+  }, [location])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,7 +68,12 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ domain, questions }),
+        body: JSON.stringify({ 
+          domain, 
+          questions,
+          located_in: location || null,
+          sessionId: sessionId || null
+        }),
       })
 
       const data = await response.json()
@@ -64,7 +100,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
   }
 
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-end overflow-hidden">
+    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <Image
         src="/agenda/11.png"
@@ -79,11 +115,11 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
 
       {/* Form Container */}
       <motion.div
-        initial={{ opacity: 0, x: 100 }}
-        whileInView={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0, scale: 0.9 }}
+        whileInView={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1, ease: "easeOut" }}
         viewport={{ once: true }}
-        className="relative z-100 w-full max-w-xl mr-4 md:mr-12 lg:mr-20"
+        className="relative z-100 w-full max-w-xl mx-4"
       >
         {/* Renaissance Frame Border */}
         <div className="relative">
@@ -165,6 +201,38 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                 </p>
               </motion.div>
 
+              {/* Location Select */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.55 }}
+              >
+                <label 
+                  htmlFor="location" 
+                  className="block text-sm font-serif text-amber-100 mb-2 tracking-wide uppercase"
+                >
+                  Văn Phòng
+                </label>
+                <select
+                  id="location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value as Location)}
+                  className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 
+                           focus:outline-none focus:ring-2
+                           transition-all duration-300 font-serif
+                           shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] appearance-none"
+                  style={{
+                    borderColor: '#D42A87'
+                  }}
+                  required
+                >
+                  <option value="" disabled className="bg-slate-900">Chọn văn phòng của bạn</option>
+                  <option value="HANOI" className="bg-slate-900">Hà Nội</option>
+                  <option value="HCM" className="bg-slate-900">Hồ Chí Minh</option>
+                  <option value="DANANG" className="bg-slate-900">Đà Nẵng</option>
+                </select>
+              </motion.div>
+
               {/* Questions Textarea */}
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
@@ -192,6 +260,46 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                   placeholder="Share your thoughts and questions..."
                   required
                 />
+              </motion.div>
+
+              {/* New Section: Đối thoại cùng Nàng Thơ */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.65 }}
+                className="mt-10 p-6 bg-amber-900/10 border border-amber-500/20 rounded-xl"
+              >
+                <h3 className="text-xl font-bold text-amber-200 mb-2 font-serif">Đối thoại cùng Nàng Thơ</h3>
+                <p className="text-sm text-amber-100/70 mb-6 leading-relaxed font-serif italic">
+                  Đăng ký ngay session User Waik-in với số lượng có hạn sau buổi training để nhận đặc quyền thực chiến chạm tim User và cơ hội sở hữu ngay chiếc bình Customer 2H cực phẩm!
+                </p>
+
+                <label 
+                  htmlFor="session" 
+                  className="block text-xs font-serif text-amber-100/80 mb-2 tracking-wide uppercase"
+                >
+                  Chọn Session - User Walk-in
+                </label>
+                <select
+                  id="session"
+                  value={sessionId}
+                  onChange={(e) => setSessionId(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 
+                           focus:outline-none focus:ring-2
+                           transition-all duration-300 font-serif
+                           shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] appearance-none disabled:opacity-50"
+                  style={{
+                    borderColor: '#D42A87'
+                  }}
+                  disabled={!location}
+                >
+                  <option value="" className="bg-slate-900">{location ? 'Chọn session' : 'Vui lòng chọn văn phòng trước'}</option>
+                  {sessions.map((s) => (
+                    <option key={s.id} value={s.id} className="bg-slate-900">
+                      {s.name} ({s.quantities} slots)
+                    </option>
+                  ))}
+                </select>
               </motion.div>
 
               {/* Error Message */}

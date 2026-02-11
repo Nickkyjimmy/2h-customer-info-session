@@ -14,15 +14,17 @@ export default function AgendaGallery() {
   const trackRef = useRef<HTMLDivElement>(null)
 
   const agendaItems = [
-    { src: '/agenda/4.png', title: 'CHECK IN', time: '14:00 - 14:45', description: 'Welcoming guests, registration, and networking.' },
-    { src: '/agenda/5.png', title: 'THE FIRST SKETCH', time: '14:45 - 15:00', description: 'Opening remarks and setting the stage for the journey.' },
-    { src: '/agenda/6.png', title: 'FINDING THE MUSE', time: '15:00 - 15:10', description: 'Discovering the inspiration behind the innovation.' },
-    { src: '/agenda/7.png', title: 'THE NEW CANVAS', time: '15:10 - 15:30', description: 'Unveiling the new product and its core features.' },
-    { src: '/agenda/8.png', title: 'THE SACRED VOW', time: '15:30 - 15:45', description: 'Commitment to quality and customer satisfaction.' },
-    { src: '/agenda/9.png', title: 'MASTERPIECE CREATORS', time: '15:45 - 16:00', description: 'Meet the team behind the vision.' },
-    { src: '/agenda/4.png', title: 'THE ART OF TOUCH', time: '16:00 - 18:00', description: 'Hands-on experience and interactive sessions.' },
-    { src: '/agenda/5.png', title: 'THE LIVING PORTRAIT', time: '18:00 - 18:30', description: 'Closing remarks and farewell.' },
+    { src: '/agenda/4.png', title: 'CHECK IN', description: 'Welcoming guests, registration, and networking.' },
+    { src: '/agenda/5.png', title: 'THE FIRST SKETCH', description: 'Opening remarks and setting the stage for the journey.' },
+    { src: '/agenda/6.png', title: 'FINDING THE MUSE', description: 'Đừng để những biểu đồ vô cảm đánh lừa! Lắng nghe vị quân chủ với trái tim luôn hướng về người dùng giải thích tầm quan trọng của việc gặp gỡ "Nàng Muse" – người nắm giữ vận mệnh tính năng trước khi Nàng dỗi và bỏ đi tìm người khác.' },
+    { src: '/agenda/7.png', title: 'THE NEW CANVAS', description: 'Unveiling the new product and its core features.' },
+    { src: '/agenda/8.png', title: 'THE SACRED VOW', description: 'Commitment to quality and customer satisfaction.' },
+    { src: '/agenda/9.png', title: 'MASTERPIECE CREATORS', description: 'Meet the team behind the vision.' },
+    { src: '/agenda/4.png', title: 'THE ART OF TOUCH', description: 'Nói chuyện với User là một nghệ thuật, và người đặt câu hỏi không bị "quê" chính là một nghệ sĩ. Gặp gỡ chuyên gia sẽ giúp bạn "mở khóa" trái tim User không cần búa. Học cách hỏi sao cho "nghệ", thoát kiếp người lạ từng quen mỗi khi đối diện khách hàng.' },
+    { src: '/agenda/5.png', title: 'THE LIVING PORTRAIT', description: 'Chạm vào Nàng Thơ. Đừng chỉ đứng xa ngắm nghía, hãy tiến tới "Chạm vào Nàng Thơ". Trực tiếp đối thoại để thấy User bằng xương bằng thịt còn drama hơn cả Data!' },
   ]
+
+  const specialTitles = ['FINDING THE MUSE', 'THE ART OF TOUCH', 'THE LIVING PORTRAIT']
 
   useEffect(() => {
     const container = containerRef.current
@@ -92,8 +94,16 @@ export default function AgendaGallery() {
               />
 
               {/* Centered Title and Description */}
-              <div className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
-                <div className="text-center px-4 md:px-8 bg-black/20 backdrop-blur-[1px] p-6 md:p-10 rounded-xl border border-white/5">
+              <div className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none px-4 md:px-8">
+                <motion.div 
+                  className={`
+                    bg-black/20 backdrop-blur-[1px] p-6 md:p-10 rounded-xl border border-white/5
+                    ${specialTitles.includes(item.title) ? 'max-w-xl text-left' : 'text-center'}
+                  `}
+                  initial={specialTitles.includes(item.title) ? { x: 0 } : {}}
+                  whileInView={specialTitles.includes(item.title) ? { x: -300 } : {}}
+                  transition={{ duration: 1, delay: 1.5, ease: "easeInOut" }}
+                >
                   <motion.h2
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -105,17 +115,7 @@ export default function AgendaGallery() {
                   >
                     {item.title}
                   </motion.h2>
-                  <motion.p
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-                    className="text-xl md:text-2xl lg:text-3xl text-white/90 tracking-widest font-mono"
-                    style={{
-                      textShadow: '0 2px 15px rgba(0, 0, 0, 0.8)'
-                    }}
-                  >
-                    {item.time}
-                  </motion.p>
+
                   <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -127,7 +127,24 @@ export default function AgendaGallery() {
                   >
                     {item.description}
                   </motion.p>
-                </div>
+                </motion.div>
+
+                {/* Special Layout for Special Titles: Right Image */}
+                {specialTitles.includes(item.title) && (
+                  <motion.div
+                    initial={{ opacity: 0, x: 100 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 1, delay: 1.5, ease: "easeInOut" }}
+                    className="absolute right-[30%] w-[300px] h-[450px] md:w-[300px] md:h-[600px] hidden md:block"
+                  >
+                     <Image
+                        src="/card-asset/rare.png"
+                        alt="Rare Card"
+                        fill
+                        className="object-contain drop-shadow-[0_0_30px_rgba(255,215,0,0.5)] "
+                     />
+                  </motion.div>
+                )}
               </div>
 
               {/* Female statue - Left side (even indices: 0, 2, 4...) */}

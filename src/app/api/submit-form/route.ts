@@ -5,7 +5,7 @@ import { validateDomainWithError } from '@/lib/validators'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { domain, questions } = body
+    const { domain, questions, located_in, sessionId } = body
 
     // Validate required fields
     if (!domain) {
@@ -36,14 +36,54 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create new attendance record with attend = true
-    const attendance = await prisma.attendance.create({
-      data: {
-        domain,
-        questions: questions || null,
-        attend: true, // Set to true on submission
-      },
-    })
+    // Use a transaction if sessionId is provided to decrement quantities
+    let attendance;
+    if (sessionId) {
+      attendance = await prisma.$transaction(async (tx: any) => {
+        // 1. Check if session has remaining quantity
+        const session = await tx.session.findUnique({
+          where: { id: sessionId },
+        })
+
+        if (!session) {
+          throw new Error('Session not found')
+        }
+
+        if (session.quantities <= 0) {
+          throw new Error('This session is full')
+        }
+
+        // 2. Create attendance
+        const newAttendance = await tx.attendance.create({
+          data: {
+            domain,
+            questions: questions || null,
+            attend: true,
+            located_in: located_in || null,
+            sessionId: sessionId,
+          } as any,
+        })
+
+        // 3. Decrement session quantity
+        await tx.session.update({
+          where: { id: sessionId },
+          data: { quantities: { decrement: 1 } },
+        })
+
+        return newAttendance
+      })
+    } else {
+      // Create new attendance record without session
+      attendance = await prisma.attendance.create({
+        data: {
+          domain,
+          questions: questions || null,
+          attend: true, // Set to true on submission
+          located_in: located_in || null,
+          sessionId: null,
+        } as any,
+      })
+    }
 
     // Return the attendance ID for redirect
     return NextResponse.json(
