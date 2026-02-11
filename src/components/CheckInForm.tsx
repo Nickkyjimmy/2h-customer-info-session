@@ -6,7 +6,11 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { validateDomainWithError } from '@/lib/validators'
 
-export default function CheckInForm() {
+interface CheckInFormProps {
+  onSuccess?: (id: string) => void
+}
+
+export default function CheckInForm({ onSuccess }: CheckInFormProps) {
   const router = useRouter()
   const [domain, setDomain] = useState('')
   const [questions, setQuestions] = useState('')
@@ -44,9 +48,13 @@ export default function CheckInForm() {
         return
       }
 
-      // Redirect to mini-game with UUID
+      // Handle success
       if (data.id) {
-        router.push(`/mini-game/${data.id}`)
+        if (onSuccess) {
+          onSuccess(data.id)
+        } else {
+          router.push(`/mini-game/${data.id}`)
+        }
       }
     } catch (err) {
       console.error('Error submitting form:', err)
