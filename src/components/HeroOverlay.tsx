@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { motion, useTransform, useScroll, useMotionValueEvent } from 'framer-motion'
 
 export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { isVisible: boolean; isMiniGameVisible?: boolean }) {
@@ -155,10 +156,19 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 20 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-4xl md:text-5xl font-bold tracking-tighter text-white leading-[0.9]"
+              className="font-bold tracking-tighter text-white leading-[0.9]"
             >
-              The <br />
-              <span className="font-[family-name:var(--font-dancing-script)] italic font-light text-5xl md:text-6xl">New Era</span>
+              <div className="relative w-48 h-12 mb-2">
+                <Image 
+                  src="/customer-2h-logo.svg" 
+                  alt="Customer 2H Logo" 
+                  fill 
+                  className="object-contain object-left"
+                />
+              </div>
+              <span className="text-4xl md:text-5xl">The </span>
+              <br />
+              <span className="font-[family-name:var(--font-dancing-script)] italic font-light text-5xl md:text-6xl text-amber-200">New Era</span>
             </motion.h1>
 
              {/* Swappable Subtitle */}
@@ -184,9 +194,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                     style={{ pointerEvents: pointerEventsFinal }}
                     className="absolute inset-0"
                  >
-                    <p className="text-xl md:text-2xl text-white font-extrabold tracking-wider">
-                       CUSTOMER 2H
-                    </p>
+                    {/* Text removed as requested */}
                  </motion.div>
              </div>
           </div>

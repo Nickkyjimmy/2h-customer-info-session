@@ -64,7 +64,7 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
   
   const [isAnimation2Active, setIsAnimation2Active] = useState(false);
   const [showSkipButton, setShowSkipButton] = useState(false);
-  const [isDrawing, setIsDrawing] = useState(false);
+
   interface TransformState {
     angle: number;
     targetRotation: number;
@@ -365,55 +365,10 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
             
             // Prevent multiple clicks
             isTransitioningRef.current = true;
-            setIsDrawing(true);
             
-            try {
-              // Call the draw API
-              const response = await fetch('/api/mini-game/draw', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ attendanceId }),
-              });
-              
-              if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to draw card');
-              }
-              
-              const data = await response.json();
-              
-              if (data.card) {
-                // Update card asset with the drawn card
-                const cardImage = `/card-asset/${data.card.name}.png`;
-                console.log('Drawn card:', data.card.name);
-                
-                // Update dataset for the preview
-                card.dataset.cardAsset = cardImage;
-                card.dataset.title = data.card.name;
-                card.dataset.name = data.card.name;
-
-                // Preload the image to prevent flickering
-                const img = new Image();
-                img.src = cardImage;
-                await new Promise((resolve) => {
-                  img.onload = resolve;
-                  img.onerror = resolve; // Continue even if error
-                });
-              }
-
-              // Reset executing flag because togglePreview sets it again
-              isTransitioningRef.current = false;
-              setIsDrawing(false);
-              togglePreview(parseInt(card.dataset.index || "0"));
-
-            } catch (error) {
-              console.error('Error drawing card:', error);
-              isTransitioningRef.current = false;
-              setIsDrawing(false);
-              alert('Failed to draw card. Please try again.');
-            }
+            // Allow immediate preview without API call
+            isTransitioningRef.current = false;
+            togglePreview(parseInt(card.dataset.index || "0"));
           }
         });
       }
@@ -488,103 +443,59 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
           container2.appendChild(previewContainer);
         }
 
-        // Add header message
-        const headerDiv = document.createElement("div");
-        headerDiv.className = "card-header-message";
-        headerDiv.textContent = '\"Customer 2h gửi đến bạn\"';
-        Object.assign(headerDiv.style, {
-          position: "absolute",
-          bottom: "105%",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "120%", 
-          textAlign: "center",
-          color: "#ff69b4",
-          fontSize: "1.3rem",
-          fontWeight: "700",
-          opacity: "0",
-          pointerEvents: "none",
-          zIndex: "1001"
-        });
-        previewContainer.appendChild(headerDiv);
+      //   // Add header message
+      //   const headerDiv = document.createElement("div");
+      //   headerDiv.className = "card-header-message";
+      //   headerDiv.textContent = '\"Customer 2h gửi đến bạn\"';
+      //   Object.assign(headerDiv.style, {
+      //     position: "absolute",
+      //     bottom: "105%",
+      //     left: "50%",
+      //     transform: "translateX(-50%)",
+      //     width: "120%", 
+      //     textAlign: "center",
+      //     color: "#ff69b4",
+      //     fontSize: "1.3rem",
+      //     fontWeight: "700",
+      //     opacity: "0",
+      //     pointerEvents: "none",
+      //     zIndex: "1001"
+      //   });
+      //   previewContainer.appendChild(headerDiv);
 
-        // Add shuffle message
-        const cardName = selectedCard.dataset.name || "";
-        const isRare = cardName.toLowerCase().includes("rare");
-        const messages = isRare ? RARE_MESSAGES : COMMON_MESSAGES;
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+      //   // Add shuffle message
+      //   const cardName = selectedCard.dataset.name || "";
+      //   const isRare = cardName.toLowerCase().includes("rare");
+      //   const messages = isRare ? RARE_MESSAGES : COMMON_MESSAGES;
+      //   const randomMessage = messages[Math.floor(Math.random() * messages.length)];
 
-        const messageDiv = document.createElement("div");
-        messageDiv.className = "card-message";
-        messageDiv.textContent = randomMessage;
-        Object.assign(messageDiv.style, {
-          position: "absolute",
-          top: "105%",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "120%", 
-          textAlign: "center",
-          color: "#000",
-          fontSize: "1.1rem",
-          fontWeight: "600",
-          opacity: "0",
-          pointerEvents: "none"
-        });
-        previewContainer.appendChild(messageDiv);
+      //   const messageDiv = document.createElement("div");
+      //   messageDiv.className = "card-message";
+      //   messageDiv.textContent = randomMessage;
+      //   Object.assign(messageDiv.style, {
+      //     position: "absolute",
+      //     top: "105%",
+      //     left: "50%",
+      //     transform: "translateX(-50%)",
+      //     width: "120%", 
+      //     textAlign: "center",
+      //     color: "#000",
+      //     fontSize: "1.1rem",
+      //     fontWeight: "600",
+      //     opacity: "0",
+      //     pointerEvents: "none"
+      //   });
+      //   previewContainer.appendChild(messageDiv);
 
-        // Animate messages in
-        gsap.to([messageDiv, headerDiv], {
-          opacity: 1,
-          y: 10,
-          duration: 0.8,
-          delay: 1.8, 
-          ease: "power2.out",
-          stagger: 0.2
-        });
-        
-        // Animate preview in with delay
-        gsap.to(previewContainer, {
-          opacity: 1,
-          scale: 1,
-          delay: 1, // 1 second delay before revealing
-          duration: 0.8,
-          ease: "back.out(1.2)",
-          onComplete: () => {
-            // Trigger side cannons confetti when card is fully revealed
-            const end = Date.now() + 3 * 1000; // 3 seconds
-            const colors = ["#a786ff", "#fd8bbc", "#eca184", "#f8deb1"];
-
-            const frame = () => {
-              if (Date.now() > end) return;
-
-              confetti({
-                particleCount: 2,
-                angle: 60,
-                spread: 55,
-                startVelocity: 60,
-                origin: { x: 0, y: 0.5 },
-                colors: colors,
-              });
-              confetti({
-                particleCount: 2,
-                angle: 120,
-                spread: 55,
-                startVelocity: 60,
-                origin: { x: 1, y: 0.5 },
-                colors: colors,
-              });
-
-              requestAnimationFrame(frame);
-            };
-
-            frame();
-          }
-        });
-        
-        // Store reference for cleanup
-        selectedCardRef.current = selectedCard;
-        (selectedCard as any).previewContainer = previewContainer;
-        
+      //   // Animate messages in
+      //   gsap.to([messageDiv, headerDiv], {
+      //     opacity: 1,
+      //     y: 10,
+      //     duration: 0.8,
+      //     delay: 1.8, 
+      //     ease: "power2.out",
+      //     stagger: 0.2
+      //   });
         gsap.to(gallery2, {
           onStart: () => {
             currentCards.forEach((card, i) => {
@@ -593,30 +504,97 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
               gsap.to(card, {
                 x: config.radius * Math.cos(currentTransformState[i].angle),
                 y: config.radius * Math.sin(currentTransformState[i].angle),
-                scale: 1,
                 duration: 1.25,
-                ease: "power4.out",
+                scale: 1,
+                rotationY: 0,
+                ease: "power4.out"
               });
-            });
-            
-            // Fade out the gallery to hide the circle
-            gsap.to(gallery2, {
-              opacity: 0,
-              duration: 0.5,
-              ease: "power2.out"
             });
           },
           scale: 5,
-          y: 0,
-          x: 0,
-          rotation: currentRotation + rotationRadians * (180 / Math.PI),
+          y: 1300,
+          rotation: currentRotation + rotationRadians * (180 / Math.PI) + 360,
           duration: 2,
           ease: "power4.out",
           onComplete: () => {
-              // Preview stays visible - no auto-hide
-              isTransitioningRef.current = false;
-          },
+            isTransitioningRef.current = false;
+          }
         });
+      //   // Animate preview in with delay
+      //   gsap.to(previewContainer, {
+      //     opacity: 1,
+      //     scale: 1,
+      //     delay: 1, // 1 second delay before revealing
+      //     duration: 0.8,
+      //     ease: "back.out(1.2)",
+      //     onComplete: () => {
+      //       // Trigger side cannons confetti when card is fully revealed
+      //       const end = Date.now() + 3 * 1000; // 3 seconds
+      //       const colors = ["#a786ff", "#fd8bbc", "#eca184", "#f8deb1"];
+
+      //       const frame = () => {
+      //         if (Date.now() > end) return;
+
+      //         confetti({
+      //           particleCount: 2,
+      //           angle: 60,
+      //           spread: 55,
+      //           startVelocity: 60,
+      //           origin: { x: 0, y: 0.5 },
+      //           colors: colors,
+      //         });
+      //         confetti({
+      //           particleCount: 2,
+      //           angle: 120,
+      //           spread: 55,
+      //           startVelocity: 60,
+      //           origin: { x: 1, y: 0.5 },
+      //           colors: colors,
+      //         });
+
+      //         requestAnimationFrame(frame);
+      //       };
+
+      //       frame();
+      //     }
+      //   });
+        
+      //   // Store reference for cleanup
+      //   selectedCardRef.current = selectedCard;
+      //   (selectedCard as any).previewContainer = previewContainer;
+        
+      //   gsap.to(gallery2, {
+      //     onStart: () => {
+      //       currentCards.forEach((card, i) => {
+      //         if (!card || !currentTransformState[i]) return;
+              
+      //         gsap.to(card, {
+      //           x: config.radius * Math.cos(currentTransformState[i].angle),
+      //           y: config.radius * Math.sin(currentTransformState[i].angle),
+      //           scale: 1,
+      //           duration: 1.25,
+      //           ease: "power4.out",
+      //         });
+      //       });
+            
+      //       // Fade out the gallery to hide the circle
+      //       gsap.to(gallery2, {
+      //         opacity: 0,
+      //         duration: 0.5,
+      //         ease: "power2.out"
+      //       });
+      //     },
+      //     scale: 5,
+      //     y: 0,
+      //     x: 0,
+      //     rotation: currentRotation + rotationRadians * (180 / Math.PI),
+      //     duration: 2,
+      //     ease: "power4.out",
+      //     onComplete: () => {
+      //         // Preview stays visible - no auto-hide
+      //         isTransitioningRef.current = false;
+      //     },
+      //   });
 
         gsap.to(parallaxState, {
           currentX: 0,
@@ -634,7 +612,7 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
           },
         });
 
-        // Title Animation removed as requested
+      //   // Title Animation removed as requested
       }
 
       const hideSelectedCard = () => {
@@ -952,15 +930,7 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
         </button>
       )}
 
-      {/* Drawing Loading State */}
-      {isDrawing && (
-        <div className="absolute inset-0 z-[2000] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin"></div>
-            <p className="text-white font-bold tracking-widest uppercase">Drawing Card...</p>
-          </div>
-        </div>
-      )}
+
 
       <footer>
         <div className="footer-container">
