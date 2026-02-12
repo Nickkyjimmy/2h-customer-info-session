@@ -37,14 +37,27 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
       { id: 'VIII', title: 'THE LIVING PORTRAIT' },
   ]
 
+  // Weights must match AgendaGallery logic: Index 3 (NEW CANVAS) is 3x
+  const weights = agendaList.map((_, i) => i === 3 ? 3 : 1)
+  const totalWeight = weights.reduce((a, b) => a + b, 0)
+  
+  const ranges = weights.map((w, i) => {
+      let start = 0
+      for(let j=0; j<i; j++) start += weights[j]
+      const end = start + w
+      return [start / totalWeight, end / totalWeight]
+  })
+
   // Scroll to section handler
   const scrollToSection = (index: number) => {
-      const heroHeight = window.innerHeight * 3 // 300vh hero
-      const galleryHeight = agendaList.length * window.innerHeight * 1.0 // 100vh per item to match AgendaGallery
+      const heroHeight = window.innerHeight * 3 
+      // Total height matches AgendaGallery total weight * 100vh
+      const galleryHeight = totalWeight * window.innerHeight 
       const scrollableDistance = galleryHeight - window.innerHeight
       
-      // Target the start of the section's "slot" plus a small buffer
-      const targetY = heroHeight + (index / agendaList.length) * scrollableDistance + 5
+      const [startRatio] = ranges[index]
+      
+      const targetY = heroHeight + startRatio * scrollableDistance + 5
       window.scrollTo({ top: targetY, behavior: 'smooth' })
   }
 
@@ -53,12 +66,11 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
       if (typeof window === 'undefined') return
       
       const heroHeight = window.innerHeight * 3
-      const galleryHeight = agendaList.length * window.innerHeight * 1.0 // Match AgendaGallery
+      const galleryHeight = totalWeight * window.innerHeight
       const galleryEnd = heroHeight + galleryHeight
       const scrollableDistance = galleryHeight - window.innerHeight
 
       // Hide TOC if we've scrolled past the gallery
-      // Use galleryEnd - window.innerHeight to trigger right at the end of valid content
       if (latest > galleryEnd - window.innerHeight) {
         if (!isPastGallery) setIsPastGallery(true)
       } else {
@@ -70,17 +82,14 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
           return
       }
 
-      // Calculate active index consistent with AgendaGallery logic
-      // Progress = (current - start) / total_scrollable
       const currentGalleryScroll = latest - heroHeight
       const progress = Math.max(0, Math.min(1, currentGalleryScroll / scrollableDistance))
       
-      const index = Math.min(
-        Math.max(0, Math.floor(progress * agendaList.length)),
-        agendaList.length - 1
-      )
+      // Find active index based on ranges
+      const index = ranges.findIndex(([start, end]) => progress >= start && progress < end)
+      const finalIndex = index === -1 ? (progress >= 0.99 ? agendaList.length - 1 : 0) : index
       
-      setActiveId(agendaList[index].id)
+      setActiveId(agendaList[finalIndex].id)
   })
 
   if (!isVisible) return null
@@ -144,7 +153,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
           <div className="flex flex-col gap-6 mt-4">
             <motion.h1 
               initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 1, y: 20 }}
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-4xl md:text-5xl font-bold tracking-tighter text-white leading-[0.9]"
             >

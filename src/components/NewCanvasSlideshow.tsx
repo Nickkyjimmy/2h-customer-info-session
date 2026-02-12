@@ -97,14 +97,13 @@ const slides: {
   }
 ]
 
-export default function NewCanvasSlideshow({ scrollYProgress }: { scrollYProgress?: MotionValue<number> }) {
+export default function NewCanvasSlideshow({ scrollYProgress, range }: { scrollYProgress?: MotionValue<number>, range?: number[] }) {
   const fallbackScroll = useMotionValue(0)
   const scroll = scrollYProgress || fallbackScroll
 
-  // Global Section Range: 3/8 -> 4/8 (approx 0.375 -> 0.5)
-  // We divide this into 3 segments for 3 slides.
-  const sectionStart = 3 / 8
-  const sectionEnd = 4 / 8
+  // Global Section Range: Use passed range or fallback to default AgendaGallery logic (3/8 -> 4/8)
+  const sectionStart = range ? range[0] : 3 / 8
+  const sectionEnd = range ? range[1] : 4 / 8
   const duration = sectionEnd - sectionStart
   const perSlide = duration / 3
 

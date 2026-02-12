@@ -14,16 +14,17 @@ export default function AgendaGallery() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
 
-  const agendaItems = [
+  // Memoize agenda items to prevent reference churn
+  const agendaItems = useMemo(() => [
     { src: '/agenda/4.png', title: 'CHECK IN', description: 'Welcoming guests, registration, and networking.' },
     { src: '/agenda/5.png', title: 'THE FIRST SKETCH', description: 'Opening remarks and setting the stage for the journey.' },
     { src: '/agenda/6.png', title: 'FINDING THE MUSE', description: 'Đừng để những biểu đồ vô cảm đánh lừa! Lắng nghe vị quân chủ với trái tim luôn hướng về người dùng giải thích tầm quan trọng của việc gặp gỡ "Nàng Muse" – người nắm giữ vận mệnh tính năng trước khi Nàng dỗi và bỏ đi tìm người khác.' },
-    { src: '/agenda/7.png', title: 'THE NEW CANVAS', description: 'Unveiling the new product and its core features.' },
-    { src: '/agenda/8.png', title: 'THE SACRED VOW', description: 'Commitment to quality and customer satisfaction.' },
-    { src: '/agenda/9.png', title: 'MASTERPIECE CREATORS', description: 'Meet the team behind the vision.' },
+    { src: '/agenda/7.png', title: 'THE NEW CANVAS', description: 'Khung tranh đã sẵn sàng, nhưng bạn cần "vũ khí" mới. Khám phá Collab Hub và "kho báu" Merch cùng những Thẻ bài bí ẩn. Vũ khí mới để các Artisans biến Insight mặn mòi thành hành động có thật. Vẽ đẹp là có quà!' },
+    { src: '/agenda/8.png', title: 'THE SACRED VOW', description: 'Bản giao ước "nặng đô" hơn lời thề lễ đường. Đã hứa gặp User là phải đi, đừng làm "tra nam" trong truyền thuyết, tội người ta' },
+    { src: '/agenda/9.png', title: 'MASTERPIECE CREATORS', description: 'Chiêm ngưỡng những "Idol" giới Customer 2H với kỷ lục thấu cảm User. Vào để học bí kíp hoặc đơn giản là để "GATO" lấy động lực thăng hạng.' },
     { src: '/agenda/4.png', title: 'THE ART OF TOUCH', description: 'Nói chuyện với User là một nghệ thuật, và người đặt câu hỏi không bị "quê" chính là một nghệ sĩ. Gặp gỡ chuyên gia sẽ giúp bạn "mở khóa" trái tim User không cần búa. Học cách hỏi sao cho "nghệ", thoát kiếp người lạ từng quen mỗi khi đối diện khách hàng.' },
     { src: '/agenda/5.png', title: 'THE LIVING PORTRAIT', description: 'Chạm vào Nàng Thơ. Đừng chỉ đứng xa ngắm nghía, hãy tiến tới "Chạm vào Nàng Thơ". Trực tiếp đối thoại để thấy User bằng xương bằng thịt còn drama hơn cả Data!' },
-  ]
+  ], [])
 
   // Data for the slider
   const specialSliderItems = useMemo(() => {
@@ -41,6 +42,21 @@ export default function AgendaGallery() {
 
   const specialTitles = ['FINDING THE MUSE', 'THE ART OF TOUCH', 'THE LIVING PORTRAIT', 'THE NEW CANVAS']
 
+  // Weights for scroll duration: 'THE NEW CANVAS' gets 3x duration
+  const weights = useMemo(() => agendaItems.map(item => item.title === 'THE NEW CANVAS' ? 3 : 1), [agendaItems])
+  const totalWeight = useMemo(() => weights.reduce((a, b) => a + b, 0), [weights])
+
+  // Pre-calculate ranges to ensure stable tracking
+  const ranges = useMemo(() => {
+      let accum = 0
+      return weights.map(w => {
+          const start = accum
+          const end = accum + w
+          accum = end
+          return [start / totalWeight, end / totalWeight]
+      })
+  }, [weights, totalWeight])
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end']
@@ -49,33 +65,32 @@ export default function AgendaGallery() {
   const [sliderProgress, setSliderProgress] = useState(50)
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    // Map scroll progress (0-1) to discrete index (0 to length-1)
-    const index = Math.min(
-      Math.max(0, Math.floor(latest * agendaItems.length)),
-      agendaItems.length - 1
-    )
-    if (index !== activeIndex) {
-      setActiveIndex(index)
+    // Find active index based on ranges
+    const foundIndex = ranges.findIndex(([start, end]) => latest >= start && latest < end)
+    const newIndex = foundIndex === -1 ? (latest >= 0.99 ? agendaItems.length - 1 : 0) : foundIndex
+
+    if (newIndex !== activeIndex) {
+      setActiveIndex(newIndex)
     }
 
     // specific logic for "THE LIVING PORTRAIT" (last item)
-    // calculating progress 0-100 for that section
-    if (index === agendaItems.length - 1) {
-       const sectionLength = 1 / agendaItems.length
-       const sectionStart = (agendaItems.length - 1) * sectionLength
-       // normalize latest within [sectionStart, 1]
-       const raw = (latest - sectionStart) / sectionLength
+    if (newIndex === agendaItems.length - 1) {
+       const [start, end] = ranges[newIndex]
+       const raw = (latest - start) / (end - start)
        const clamped = Math.min(Math.max(raw, 0), 1)
        setSliderProgress(clamped * 100)
     }
   })
+  
+  // Range for New Canvas (Index 3)
+  const newCanvasRange = ranges[3] || [0, 0]
 
   return (
     <section
       ref={containerRef}
       className="agenda-gallery-section relative w-full bg-black"
-      // Height determines scroll speed - 100vh gives ample time per slide (slower)
-      style={{ height: `${agendaItems.length * 100}vh` }} 
+      // Height based on total weight
+      style={{ height: `${totalWeight * 100}vh` }} 
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center">
         
@@ -150,7 +165,7 @@ export default function AgendaGallery() {
                                                 <ThreeDSlider items={specialSliderItems} progress={sliderProgress} />
                                             </div>
                                         ) : item.title === 'THE NEW CANVAS' ? (
-                                            <NewCanvasSlideshow scrollYProgress={scrollYProgress} />
+                                            <NewCanvasSlideshow scrollYProgress={scrollYProgress} range={newCanvasRange} />
                                         ) : (
                                             <Image
                                                 src={
