@@ -114,13 +114,42 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/40" />
 
       {/* Form Container */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        viewport={{ once: true }}
-        className="relative z-100 w-full max-w-xl mx-4"
-      >
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        {/* Left Column: Reward Image */}
+        <motion.div
+           initial={{ opacity: 0, x: -50 }}
+           whileInView={{ opacity: 1, x: 0 }}
+           transition={{ duration: 1 }}
+           className="hidden lg:flex justify-center items-center gap-4"
+        >
+           <div className="relative w-full aspect-[3/4] max-w-[300px]">
+             <Image 
+               src="/reward/mat-truoc.png" 
+               alt="Customer 2H Reward Front" 
+               fill 
+               className="object-contain drop-shadow-[0_0_50px_rgba(251,191,36,0.3)] hover:scale-105 transition-transform duration-500"
+               priority
+             />
+           </div>
+           <div className="relative w-full aspect-[3/4] max-w-[300px]">
+             <Image 
+               src="/reward/mat-sau.png" 
+               alt="Customer 2H Reward Back" 
+               fill 
+               className="object-contain drop-shadow-[0_0_50px_rgba(251,191,36,0.3)] hover:scale-105 transition-transform duration-500"
+               priority
+             />
+           </div>
+        </motion.div>
+
+        {/* Right Column: Check-in Form */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          viewport={{ once: true }}
+          className="relative z-10 w-full max-w-xl mx-auto"
+        >
         {/* Renaissance Frame Border */}
         <div className="relative">
           {/* Frame Image as Border - extends beyond content */}
@@ -149,7 +178,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                 textShadow: '0 2px 10px rgba(251, 191, 36, 0.3)'
               }}
             >
-              Check-In Online
+              Đối thoại cùng Nàng Thơ
             </motion.h2>
             
             <motion.p
@@ -158,7 +187,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-center text-sm md:text-base text-amber-200/70 mb-8 font-serif italic"
             >
-              Share your wisdom and inquiries with us
+              Đăng ký ngay session User Waik-in với số lượng có hạn sau buổi training để nhận đặc quyền thực chiến chạm tim User và cơ hội sở hữu ngay <span className="font-bold text-amber-100">chiếc bình Customer 2H cực phẩm</span>!
             </motion.p>
 
             {/* Decorative divider */}
@@ -227,9 +256,43 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                   required
                 >
                   <option value="" disabled className="bg-slate-900">Chọn văn phòng của bạn</option>
-                  <option value="HANOI" className="bg-slate-900">Hà Nội</option>
                   <option value="HCM" className="bg-slate-900">Hồ Chí Minh</option>
+                  <option value="HANOI" className="bg-slate-900">Hà Nội</option>
                   <option value="DANANG" className="bg-slate-900">Đà Nẵng</option>
+                </select>
+              </motion.div>
+
+              {/* Session Select */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+              >
+                <label 
+                  htmlFor="session" 
+                  className="block text-sm font-serif text-amber-100 mb-2 tracking-wide uppercase"
+                >
+                  Chọn Session - User Walk-in
+                </label>
+                <select
+                  id="session"
+                  value={sessionId}
+                  onChange={(e) => setSessionId(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 
+                           focus:outline-none focus:ring-2
+                           transition-all duration-300 font-serif
+                           shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] appearance-none disabled:opacity-50"
+                  style={{
+                    borderColor: '#D42A87'
+                  }}
+                  disabled={!location}
+                >
+                  <option value="" className="bg-slate-900">{location ? 'Chọn session' : 'Vui lòng chọn văn phòng trước'}</option>
+                  {sessions.map((s) => (
+                    <option key={s.id} value={s.id} className="bg-slate-900">
+                      {s.name} ({s.quantities} slots)
+                    </option>
+                  ))}
                 </select>
               </motion.div>
 
@@ -262,45 +325,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                 />
               </motion.div>
 
-              {/* New Section: Đối thoại cùng Nàng Thơ */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.65 }}
-                className="mt-10 p-6 bg-amber-900/10 border border-amber-500/20 rounded-xl"
-              >
-                <h3 className="text-xl font-bold text-amber-200 mb-2 font-serif">Đối thoại cùng Nàng Thơ</h3>
-                <p className="text-sm text-amber-100/70 mb-6 leading-relaxed font-serif italic">
-                  Đăng ký ngay session User Waik-in với số lượng có hạn sau buổi training để nhận đặc quyền thực chiến chạm tim User và cơ hội sở hữu ngay chiếc bình Customer 2H cực phẩm!
-                </p>
 
-                <label 
-                  htmlFor="session" 
-                  className="block text-xs font-serif text-amber-100/80 mb-2 tracking-wide uppercase"
-                >
-                  Chọn Session - User Walk-in
-                </label>
-                <select
-                  id="session"
-                  value={sessionId}
-                  onChange={(e) => setSessionId(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 
-                           focus:outline-none focus:ring-2
-                           transition-all duration-300 font-serif
-                           shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] appearance-none disabled:opacity-50"
-                  style={{
-                    borderColor: '#D42A87'
-                  }}
-                  disabled={!location}
-                >
-                  <option value="" className="bg-slate-900">{location ? 'Chọn session' : 'Vui lòng chọn văn phòng trước'}</option>
-                  {sessions.map((s) => (
-                    <option key={s.id} value={s.id} className="bg-slate-900">
-                      {s.name} ({s.quantities} slots)
-                    </option>
-                  ))}
-                </select>
-              </motion.div>
 
               {/* Error Message */}
               {error && (
@@ -358,7 +383,8 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
             </div>
           </div>
         </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </section>
   )
 }

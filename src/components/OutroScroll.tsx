@@ -55,7 +55,7 @@ const Scene = ({ images, scrollYProgress }: { images: HTMLImageElement[], scroll
             FRAME_COUNT - 1,
             Math.max(0, Math.floor(progress * (FRAME_COUNT - 1)))
         )
-        const img = images[frameIndex]
+        const img = images[(FRAME_COUNT - 1) - frameIndex]
         if (img && img.complete && texture.image !== img) {
             texture.image = img
             texture.needsUpdate = true
