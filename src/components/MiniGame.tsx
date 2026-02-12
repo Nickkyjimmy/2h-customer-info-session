@@ -892,7 +892,7 @@ export default function MiniGame({ attendanceId }: MiniGameProps) {
   }, [attendanceId]); // Re-run if attendanceId changes (though it shouldn't)
 
   return (
-    <div className="relative w-full h-screen bg-[#D4C89A] text-[#1f1f1f] overflow-hidden">
+    <div className="relative w-full h-screen text-[#1f1f1f] overflow-hidden bg-[url('/mini-app.png')] bg-cover bg-center bg-no-repeat">
       {/* Animation 1: Linear to Circular */}
       <div
         ref={container1Ref}

@@ -32,7 +32,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
   // Scroll to section handler
   const scrollToSection = (index: number) => {
       const heroHeight = window.innerHeight * 3 // 300vh hero
-      const galleryHeight = agendaList.length * window.innerHeight * 0.5 // 50vh per item
+      const galleryHeight = agendaList.length * window.innerHeight * 1.0 // 100vh per item to match AgendaGallery
       const scrollableDistance = galleryHeight - window.innerHeight
       
       // Target the start of the section's "slot" plus a small buffer
@@ -45,7 +45,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
       if (typeof window === 'undefined') return
       
       const heroHeight = window.innerHeight * 3
-      const galleryHeight = agendaList.length * window.innerHeight * 0.5
+      const galleryHeight = agendaList.length * window.innerHeight * 1.0 // Match AgendaGallery
       const galleryEnd = heroHeight + galleryHeight
       const scrollableDistance = galleryHeight - window.innerHeight
 
@@ -209,7 +209,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                  >
                     <p className="uppercase text-xs tracking-widest text-white/50 mb-1 font-semibold">Địa điểm</p>
                     <p className="font-medium text-base text-white">Sảnh lầu 6,</p>
-                    <p className="opacity-80">Tòa nhà Phú Mỹ Hưng</p>
+                    <p className="opacity-80">Tòa nhà Phú Mỹ Hưng, Văn Phòng Hồ Chí Minh</p>
                  </motion.div>
               </motion.div>
 

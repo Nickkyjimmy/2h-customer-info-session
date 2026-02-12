@@ -1,9 +1,10 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useMemo } from 'react'
 import Image from 'next/image'
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion'
-import { cn } from '@/lib/utils' // Assuming you have a util for classnames, if not standard template literal is fine.
+import { cn } from '@/lib/utils' 
+import ThreeDSlider from './ThreeDSlider'
 
 // Helper for conditional classnames if cn util doesn't exist
 const classNames = (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' ')
@@ -23,12 +24,28 @@ export default function AgendaGallery() {
     { src: '/agenda/5.png', title: 'THE LIVING PORTRAIT', description: 'Chạm vào Nàng Thơ. Đừng chỉ đứng xa ngắm nghía, hãy tiến tới "Chạm vào Nàng Thơ". Trực tiếp đối thoại để thấy User bằng xương bằng thịt còn drama hơn cả Data!' },
   ]
 
+  // Data for the slider
+  const specialSliderItems = useMemo(() => {
+    const portraitImages = [
+        'alchemist', 'artisan', 'grandmaster', 'joybringer', 
+        'merchant', 'pathfinder', 'patron', 'reformer', 
+        'strategist', 'visionary', 'voyager'
+    ]
+    return portraitImages.map((name, index) => ({
+        title: name.charAt(0).toUpperCase() + name.slice(1),
+        num: String(index + 1).padStart(2, '0'),
+        imageUrl: `/liberty-of-portrait/${name}.png`
+    }))
+  }, [])
+
   const specialTitles = ['FINDING THE MUSE', 'THE ART OF TOUCH', 'THE LIVING PORTRAIT']
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end']
   })
+
+  const [sliderProgress, setSliderProgress] = useState(50)
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     // Map scroll progress (0-1) to discrete index (0 to length-1)
@@ -39,30 +56,28 @@ export default function AgendaGallery() {
     if (index !== activeIndex) {
       setActiveIndex(index)
     }
+
+    // specific logic for "THE LIVING PORTRAIT" (last item)
+    // calculating progress 0-100 for that section
+    if (index === agendaItems.length - 1) {
+       const sectionLength = 1 / agendaItems.length
+       const sectionStart = (agendaItems.length - 1) * sectionLength
+       // normalize latest within [sectionStart, 1]
+       const raw = (latest - sectionStart) / sectionLength
+       const clamped = Math.min(Math.max(raw, 0), 1)
+       setSliderProgress(clamped * 100)
+    }
   })
 
   return (
     <section
       ref={containerRef}
       className="agenda-gallery-section relative w-full bg-black"
-      // Height determines scroll speed - 400vh gives ample time per slide
-      style={{ height: `${agendaItems.length * 50}vh` }} 
+      // Height determines scroll speed - 100vh gives ample time per slide (slower)
+      style={{ height: `${agendaItems.length * 100}vh` }} 
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center">
         
-        {/* Progress Indicator */}
-        <div className="absolute top-10 left-0 right-0 z-50 flex justify-center gap-2">
-            {agendaItems.map((_, idx) => (
-                <div 
-                    key={idx} 
-                    className={classNames(
-                        "h-1 rounded-full transition-all duration-300",
-                        idx === activeIndex ? "w-8 bg-white" : "w-2 bg-white/20"
-                    )}
-                />
-            ))}
-        </div>
-
         {/* Carousel Container */}
         <div className="relative w-full h-full">
             <AnimatePresence mode="popLayout">
@@ -111,23 +126,34 @@ export default function AgendaGallery() {
                             </div>
 
                             {/* Right Side: Visuals for Special Items */}
-                            <div className="relative h-full flex items-center justify-center">
-                                {(item.title === 'FINDING THE MUSE' || item.title === 'THE ART OF TOUCH') && (
+                            <div className="relative h-full flex items-center justify-center w-full">
+                                {specialTitles.includes(item.title) && (
                                      <motion.div
                                         initial={{ opacity: 0, x: 50, rotate: 5 }}
                                         animate={{ opacity: 1, x: 0, rotate: 0 }}
                                         transition={{ duration: 0.8, delay: 0.3 }}
-                                        className="relative w-[300px] h-[450px] md:w-[400px] md:h-[600px]"
+                                        className={classNames(
+                                            "relative",
+                                            item.title === 'THE LIVING PORTRAIT' 
+                                                ? "w-full h-[60vh]" // Wider container for slider
+                                                : "w-[300px] h-[450px] md:w-[400px] md:h-[600px]"
+                                        )}
                                      >
-                                        <Image
-                                            src={
-                                              item.title === 'FINDING THE MUSE' ? '/agenda/agenda-find-the-muse.png' :
-                                              '/agenda/agenda-the-art-of-touch.png'
-                                            }
-                                            alt={item.title}
-                                            fill
-                                            className="object-contain drop-shadow-[0_0_50px_rgba(255,255,255,0.2)]"
-                                        />
+                                        {item.title === 'THE LIVING PORTRAIT' ? (
+                                            <div className="w-full h-full">
+                                                <ThreeDSlider items={specialSliderItems} progress={sliderProgress} />
+                                            </div>
+                                        ) : (
+                                            <Image
+                                                src={
+                                                  item.title === 'FINDING THE MUSE' ? '/agenda/agenda-find-the-muse.png' :
+                                                  '/agenda/agenda-the-art-of-touch.png'
+                                                }
+                                                alt={item.title}
+                                                fill
+                                                className="object-contain drop-shadow-[0_0_50px_rgba(255,255,255,0.2)]"
+                                            />
+                                        )}
                                      </motion.div>
                                 )}
                             </div>
