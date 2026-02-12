@@ -51,7 +51,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
 
   // Scroll to section handler
   const scrollToSection = (index: number) => {
-      const heroHeight = window.innerHeight * 3 
+      const heroHeight = window.innerHeight * 6 
       // Total height matches AgendaGallery total weight * 100vh
       const galleryHeight = totalWeight * window.innerHeight 
       const scrollableDistance = galleryHeight - window.innerHeight
@@ -66,7 +66,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
   useMotionValueEvent(scrollY, "change", (latest) => {
       if (typeof window === 'undefined') return
       
-      const heroHeight = window.innerHeight * 3
+      const heroHeight = window.innerHeight * 6
       const galleryHeight = totalWeight * window.innerHeight
       const galleryEnd = heroHeight + galleryHeight
       const scrollableDistance = galleryHeight - window.innerHeight
@@ -168,7 +168,8 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
               </div>
               <span className="text-4xl md:text-5xl">The </span>
               <br />
-              <span className="font-[family-name:var(--font-dancing-script)] italic font-light text-5xl md:text-6xl text-amber-200">New Era</span>
+              <span className="text-4xl md:text-5xl">New </span>
+              <span className="font-[family-name:var(--font-dancing-script)] italic font-light text-5xl md:text-6xl">era</span>
             </motion.h1>
 
              {/* Swappable Subtitle */}

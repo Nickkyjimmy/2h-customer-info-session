@@ -16,8 +16,8 @@ export default function AgendaGallery() {
 
   // Memoize agenda items to prevent reference churn
   const agendaItems = useMemo(() => [
-    { src: '/agenda/4.png', title: 'CHECK IN', description: 'Welcoming guests, registration, and networking.' },
-    { src: '/agenda/5.png', title: 'THE FIRST SKETCH', description: 'Opening remarks and setting the stage for the journey.' },
+    { src: '/agenda/4.png', title: 'CHECK IN', description: 'Chào mừng bạn đến với Customer 2H Info Session - The New Era of Customer Experience' },
+    { src: '/agenda/5.png', title: 'THE FIRST SKETCH', description: 'Đầu tiên, hãy tìm hiểu về Customer 2H thông qua các thông tin và thông tin chi tiết về sản phẩm.' },
     { src: '/agenda/6.png', title: 'FINDING THE MUSE', description: 'Đừng để những biểu đồ vô cảm đánh lừa! Lắng nghe vị quân chủ với trái tim luôn hướng về người dùng giải thích tầm quan trọng của việc gặp gỡ "Nàng Muse" – người nắm giữ vận mệnh tính năng trước khi Nàng dỗi và bỏ đi tìm người khác.' },
     { src: '/agenda/7.png', title: 'THE NEW CANVAS', description: 'Khung tranh đã sẵn sàng, nhưng bạn cần "vũ khí" mới. Khám phá Collab Hub và "kho báu" Merch cùng những Thẻ bài bí ẩn. Vũ khí mới để các Artisans biến Insight mặn mòi thành hành động có thật. Vẽ đẹp là có quà!' },
     { src: '/agenda/8.png', title: 'THE SACRED VOW', description: 'Bản giao ước "nặng đô" hơn lời thề lễ đường. Đã hứa gặp User là phải đi, đừng làm "tra nam" trong truyền thuyết, tội người ta' },
