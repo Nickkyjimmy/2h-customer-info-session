@@ -109,7 +109,7 @@ export default function AgendaGallery() {
                             {/* Left Side: Text */}
                             <div className={cn(
                                 "flex flex-col justify-center text-left space-y-6",
-                                item.title === 'THE NEW CANVAS' ? "md:-ml-40 pl-6 z-50 relative" : "md:pl-10"
+                                item.title === 'THE NEW CANVAS' ? "md:-ml-20 pl-6 z-50 relative" : "md:pl-10"
                             )}>
                                 <motion.h2 
                                     className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9]"

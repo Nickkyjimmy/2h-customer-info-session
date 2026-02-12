@@ -27,13 +27,13 @@ const slides: {
         customClass: "absolute inset-0 w-full h-full object-contain z-0 origin-center",
         // These static anims are ignored by scroll logic below if targeted
         initial: { opacity: 0, scale: 1, x: -50 },
-        animate: { opacity: 1, scale: 1.3, x: -120 , y: 80},
+        animate: { opacity: 1, scale: 1.2, x: -120 , y: 80},
         transition: { duration: 0.8, ease: "easeOut" }
       },
       { 
         name: 'reward-popup.png', 
         type: 'popup',
-        customClass: "absolute w-[50%] md:w-[50%] h-auto z-20 drop-shadow-2xl top-[45%] left-[30%] -translate-x-1/2 -translate-y-1/2",
+        customClass: "absolute w-[50%] md:w-[40%] h-auto z-20 drop-shadow-2xl top-[45%] left-[30%] -translate-x-1/2 -translate-y-1/2",
         initial: { opacity: 0, scale: 0, x: -400, y: 200 }, 
         animate: { opacity: 1, scale: 1.6, x: 0, y: 20 },
         transition: { delay: 0.6, duration: 1, type: "spring", bounce: 0.5 }
@@ -57,14 +57,14 @@ const slides: {
         type: 'device',
         customClass: "absolute inset-0 w-full h-full object-contain z-0 origin-center",
         initial: { opacity: 0, scale: 1, x: -50 },
-        animate: { opacity: 1, scale: 1.8, x: -200 , y: 100},
+        animate: { opacity: 1, scale: 1.5, x: -200 , y: 50},
         transition: { duration: 0.8, ease: "easeOut" }
       },
       { 
         name: 'popup-collab-hub.png', 
         type: 'popup',
         // Copying Slide 1 style for consistency until user customizes
-        customClass: "absolute w-[50%] md:w-[100%] h-auto z-20 drop-shadow-2xl top-[45%] left-[30%] -translate-x-1/2 -translate-y-1/2",
+        customClass: "absolute w-[50%] md:w-[70%] h-auto z-20 drop-shadow-2xl top-[45%] left-[30%] -translate-x-1/2 -translate-y-1/2",
         initial: { opacity: 0, scale: 0, x: -400, y: 200 }, 
         animate: { opacity: 1, scale: 1.6, x: 0, y: 20 },
         transition: { delay: 0.6, duration: 1, type: "spring", bounce: 0.5 }
@@ -81,13 +81,13 @@ const slides: {
         type: 'device',
         customClass: "absolute inset-0 w-full h-full object-contain z-0 origin-center",
         initial: { opacity: 0, scale: 1, x: -50 },
-        animate: { opacity: 1, scale: 1.6, x: -200 , y: 100},
+        animate: { opacity: 1, scale: 1.3, x: -100 , y: 100},
         transition: { duration: 0.8, ease: "easeOut" }
       },
       { 
         name: 'popup-the-new-era.png', 
         type: 'popup',
-        customClass: "absolute w-[50%] md:w-[70%] h-auto z-20 drop-shadow-2xl top-[45%] left-[30%] -translate-x-1/2 -translate-y-1/2",
+        customClass: "absolute w-[50%] md:w-[50%] h-auto z-20 drop-shadow-2xl top-[45%] left-[30%] -translate-x-1/2 -translate-y-1/2",
         initial: { opacity: 0, scale: 0, x: -400, y: 200 }, 
         animate: { opacity: 1, scale: 1.3, x: 0, y: 20 },
         transition: { delay: 0.6, duration: 1, type: "spring", bounce: 0.5 }
