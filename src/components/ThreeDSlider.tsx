@@ -101,8 +101,24 @@ const ThreeDSlider: React.FC<ThreeDSliderProps> = ({
     const targetProgressRef = useRef(50); // For smooth damping (optional, or direct mapping)
     const isDownRef = useRef(false);
     const startXRef = useRef(0);
+    const startYRef = useRef(0);
     const isHoveringRef = useRef(false); // Ref for immediate access in loop
     const rafRef = useRef<number | null>(null);
+    const isMobileRef = useRef(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+             isMobileRef.current = window.innerWidth < 768;
+        };
+        // Initial check only on client
+        if (typeof window !== 'undefined') {
+            handleResize();
+            window.addEventListener('resize', handleResize);
+        }
+        return () => {
+            if (typeof window !== 'undefined') window.removeEventListener('resize', handleResize);
+        }
+    }, []);
 
     // Array of refs to children elements
     const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -131,9 +147,11 @@ const ThreeDSlider: React.FC<ThreeDSliderProps> = ({
             const ratio = (index - activeFloat) / denominator; // -1 (leftmost) to 1 (rightmost)
 
             // Using logic from snippet for visual spread
-            const tx = ratio * 250; // Reduced from 400 to make items closer and slower visually
-            const ty = ratio * 40;  // Reduced from 50
-            const rot = ratio * 45; // Reduced from 60
+            const isMobile = isMobileRef.current;
+            // Mobile: Vertical layout. Desktop: Horizontal layout.
+            const tx = ratio * (isMobile ? 0 : 250); 
+            const ty = ratio * (isMobile ? 180 : 40);
+            const rot = ratio * (isMobile ? 5 : 45);
             
             // Or stick to snippet exactly if desired:
             // const tx = ratio * 800;
@@ -158,7 +176,7 @@ const ThreeDSlider: React.FC<ThreeDSliderProps> = ({
             // pointer-events is auto on items.
 
             // Opacity
-            const opacity = 1 - (dist / numItems) * 1.5; // Custom fade logic
+            const opacity = 1 - (dist / numItems) * 2; // Custom fade logic
 
             // Optimize: simple matrix3d or individual properties
             // Individual is often faster for browser composition layers
@@ -168,13 +186,12 @@ const ThreeDSlider: React.FC<ThreeDSliderProps> = ({
             // Inner content opacity
             const inner = el.querySelector('.slider-item-content') as HTMLElement;
             if (inner) {
-                // inner.style.opacity = Math.max(0, Math.min(1, opacity)).toString();
-                // Keep opacity simple for now
-                if (Math.abs(index - activeFloat) > 3) {
-                     inner.style.opacity = "0.5";
-                } else {
-                     inner.style.opacity = "1";
-                }
+                 // Gradual fade based on distance from center (ratio)
+                 // ratio is -1 to 1. 0 is center.
+                 // We want 1 at center, fading to 0 at edges.
+                 const distRatio = Math.abs(ratio);
+                 const fade = 1 - distRatio * 1.5; // 1.5 multiplier makes it fade faster
+                 inner.style.opacity = Math.max(0, Math.min(1, fade)).toFixed(2);
             }
         });
 
@@ -211,9 +228,9 @@ const ThreeDSlider: React.FC<ThreeDSliderProps> = ({
         // No setState here! The loop picks it up.
     }, [speedWheel]);
 
-    const getClientX = (e: MouseEvent | TouchEvent) => {
-        if ('touches' in e) return e.touches[0].clientX;
-        return (e as MouseEvent).clientX;
+    const getClientPos = (e: MouseEvent | TouchEvent) => {
+        if ('touches' in e) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        return { x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY };
     };
 
     const handleMouseDown = useCallback((e: MouseEvent | TouchEvent) => {
@@ -223,22 +240,27 @@ const ThreeDSlider: React.FC<ThreeDSliderProps> = ({
         if (!isHoveringRef.current) return;
         
         isDownRef.current = true;
-        const x = getClientX(e);
-        if (x !== undefined) startXRef.current = x;
+        const { x, y } = getClientPos(e);
+        startXRef.current = x;
+        startYRef.current = y;
     }, []);
 
     const handleMouseMove = useCallback((e: MouseEvent | TouchEvent) => {
         if (!isDownRef.current) return;
 
-        const x = getClientX(e);
-        if (x === undefined) return;
+        const { x, y } = getClientPos(e);
 
-        const diff = (x - startXRef.current) * speedDrag;
+        const isMobile = isMobileRef.current;
+        const diff = isMobile
+            ? (y - startYRef.current) * speedDrag // Vertical drag
+            : (x - startXRef.current) * speedDrag; // Horizontal drag
+
         const current = progressRef.current;
         const next = Math.max(0, Math.min(100, current + diff));
 
         progressRef.current = next;
         startXRef.current = x;
+        startYRef.current = y;
     }, [speedDrag]);
 
     const handleMouseUp = useCallback(() => {

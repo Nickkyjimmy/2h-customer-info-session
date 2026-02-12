@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils' 
 import ThreeDSlider from './ThreeDSlider'
+import NewCanvasSlideshow from './NewCanvasSlideshow'
 
 // Helper for conditional classnames if cn util doesn't exist
 const classNames = (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' ')
@@ -38,7 +39,7 @@ export default function AgendaGallery() {
     }))
   }, [])
 
-  const specialTitles = ['FINDING THE MUSE', 'THE ART OF TOUCH', 'THE LIVING PORTRAIT']
+  const specialTitles = ['FINDING THE MUSE', 'THE ART OF TOUCH', 'THE LIVING PORTRAIT', 'THE NEW CANVAS']
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -106,7 +107,10 @@ export default function AgendaGallery() {
                         <div className="relative z-40 w-full max-w-7xl px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full">
                             
                             {/* Left Side: Text */}
-                            <div className="flex flex-col justify-center text-left space-y-6 md:pl-10">
+                            <div className={cn(
+                                "flex flex-col justify-center text-left space-y-6",
+                                item.title === 'THE NEW CANVAS' ? "md:-ml-40 pl-6 z-50 relative" : "md:pl-10"
+                            )}>
                                 <motion.h2 
                                     className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9]"
                                     initial={{ x: -50, opacity: 0 }}
@@ -136,13 +140,17 @@ export default function AgendaGallery() {
                                             "relative",
                                             item.title === 'THE LIVING PORTRAIT' 
                                                 ? "w-full h-[60vh]" // Wider container for slider
-                                                : "w-[300px] h-[450px] md:w-[400px] md:h-[600px]"
+                                                : item.title === 'THE NEW CANVAS'
+                                                    ? "w-full h-[40vh] md:w-full md:h-[70vh]"
+                                                    : "w-[300px] h-[450px] md:w-[400px] md:h-[600px]"
                                         )}
                                      >
                                         {item.title === 'THE LIVING PORTRAIT' ? (
                                             <div className="w-full h-full">
                                                 <ThreeDSlider items={specialSliderItems} progress={sliderProgress} />
                                             </div>
+                                        ) : item.title === 'THE NEW CANVAS' ? (
+                                            <NewCanvasSlideshow scrollYProgress={scrollYProgress} />
                                         ) : (
                                             <Image
                                                 src={
@@ -162,7 +170,7 @@ export default function AgendaGallery() {
                         {/* Statues (Decorations) */}
                         {index % 2 === 0 ? (
                             <motion.div 
-                                className="absolute -left-10 bottom-0 z-50 pointer-events-none h-[60vh] md:h-[80vh] opacity-80"
+                                className="absolute -left-10 bottom-0 z-0 md:z-50 pointer-events-none h-[60vh] md:h-[80vh] opacity-30 md:opacity-80"
                                 initial={{ x: -100, opacity: 0 }}
                                 animate={{ x: 0, opacity: 0.8 }}
                                 transition={{ duration: 1 }}
@@ -178,7 +186,7 @@ export default function AgendaGallery() {
                             </motion.div>
                         ) : (
                             <motion.div 
-                                className="absolute -right-10 bottom-0 z-50 pointer-events-none h-[60vh] md:h-[80vh] opacity-80"
+                                className="absolute -right-10 bottom-0 z-0 md:z-50 pointer-events-none h-[60vh] md:h-[80vh] opacity-30 md:opacity-80"
                                 initial={{ x: 100, opacity: 0 }}
                                 animate={{ x: 0, opacity: 0.8 }}
                                 transition={{ duration: 1 }}

@@ -8,6 +8,14 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
   const [activeId, setActiveId] = useState('')
   const [hasTransitioned, setHasTransitioned] = useState(false)
   const [isPastGallery, setIsPastGallery] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Scroll-based transition effect
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -80,13 +88,17 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
   // Variants for auto-transition
   const titleVariants = {
     initial: { x: '0px', y: '0px', scale: 1, opacity: 1 },
-    final: { x: '-28vw', y: '-22vh', scale: 0.85, opacity: 1, transition: { duration: 1.5, ease: "easeInOut" } as const },
+    final: isMobile 
+      ? { opacity: 0, transition: { duration: 0.5 } as const }
+      : { x: '-28vw', y: '-22vh', scale: 0.85, opacity: 1, transition: { duration: 1.5, ease: "easeInOut" } as const },
     hidden: { opacity: 0, transition: { duration: 0.5 } } // Hide when past gallery
   }
 
   const contentVariants = {
     initial: { x: '0px', y: '0px', scale: 1, opacity: 1 },
-    final: { x: '-28vw', y: '18vh', scale: 0.85, opacity: 1, transition: { duration: 1.5, ease: "easeInOut" } as const },
+    final: isMobile
+      ? { opacity: 0, transition: { duration: 0.5 } as const }
+      : { x: '-28vw', y: '18vh', scale: 0.85, opacity: 1, transition: { duration: 1.5, ease: "easeInOut" } as const },
     hidden: { opacity: 0, transition: { duration: 0.5 } }
   }
 

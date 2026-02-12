@@ -137,7 +137,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
           </div>
 
           {/* Form Content - with padding to avoid frame edges */}
-          <div className="relative z-10 bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-md p-12 md:p-16 m-4">
+          <div className="relative z-10 bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-md p-6 md:p-16 m-4">
             {/* Title */}
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -179,7 +179,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                   htmlFor="domain" 
                   className="block text-sm font-serif text-amber-100 mb-2 tracking-wide uppercase"
                 >
-                  Email Address
+                  Email 
                 </label>
                 <input
                   type="email"
