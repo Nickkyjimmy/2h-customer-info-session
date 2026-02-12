@@ -94,7 +94,7 @@ export default function Home() {
       </AnimatePresence>
 
       <HeroOverlay isVisible={isContentLoaded} isMiniGameVisible={isMiniGameVisible} />
-      <AgendaTransitionOverlay />
+      {/* <AgendaTransitionOverlay /> */}
       <KeyboardScroll 
           onLoadComplete={() => setIsContentLoaded(true)} 
           onProgress={setLoadingProgress}
