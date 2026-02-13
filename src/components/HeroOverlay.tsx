@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { motion, useTransform, useScroll, useMotionValueEvent } from 'framer-motion'
+import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
 
 export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { isVisible: boolean; isMiniGameVisible?: boolean }) {
   const { scrollY } = useScroll()
@@ -97,19 +97,19 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
 
   // Variants for auto-transition
   const titleVariants = {
-    initial: { x: '0px', y: '0px', scale: 1, opacity: 1 },
+    initial: { x: '0px', y: '0px', scale: 1, opacity: 1, pointerEvents: 'auto' as const },
     final: isMobile 
-      ? { opacity: 0, transition: { duration: 0.5 } as const }
-      : { x: '-28vw', y: '-22vh', scale: 0.85, opacity: 1, transition: { duration: 1.5, ease: "easeInOut" } as const },
-    hidden: { opacity: 0, transition: { duration: 0.5 } } // Hide when past gallery
+      ? { opacity: 0, pointerEvents: 'none' as const, transition: { duration: 0.5 } as const }
+      : { x: '-28vw', y: '-22vh', scale: 0.85, opacity: 1, pointerEvents: 'auto' as const, transition: { duration: 1.5, ease: "easeOut" } as const },
+    hidden: { opacity: 0, pointerEvents: 'none' as const, transition: { duration: 0.5 } } // Hide when past gallery
   }
 
   const contentVariants = {
-    initial: { x: '0px', y: '0px', scale: 1, opacity: 1 },
+    initial: { x: '0px', y: '0px', scale: 1, opacity: 1, pointerEvents: 'auto' as const },
     final: isMobile
-      ? { opacity: 0, transition: { duration: 0.5 } as const }
-      : { x: '-28vw', y: '18vh', scale: 0.85, opacity: 1, transition: { duration: 1.5, ease: "easeInOut" } as const },
-    hidden: { opacity: 0, transition: { duration: 0.5 } }
+      ? { opacity: 0, pointerEvents: 'none' as const, transition: { duration: 0.5 } as const }
+      : { x: '-28vw', y: '18vh', scale: 0.85, opacity: 1, pointerEvents: 'auto' as const, transition: { duration: 1.5, ease: "easeOut" } as const },
+    hidden: { opacity: 0, pointerEvents: 'none' as const, transition: { duration: 0.5 } }
   }
 
   const opacityVariantsInitial = {
@@ -122,8 +122,9 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
     final: { opacity: 1, transition: { duration: 1 } }
   }
 
-  const pointerEventsInitial = hasTransitioned ? 'none' : 'auto'
-  const pointerEventsFinal = hasTransitioned ? 'auto' : 'none'
+  const isOverlayClickable = !isPastGallery && !isMiniGameVisible
+  const pointerEventsInitial = (hasTransitioned || !isOverlayClickable) ? 'none' : 'auto'
+  const pointerEventsFinal = (!hasTransitioned || !isOverlayClickable) ? 'none' : 'auto'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
@@ -147,9 +148,11 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
         {/* Top Section: Title & Changing Text */}
         <motion.div 
           initial="initial"
-          animate={isMiniGameVisible ? "hidden" : (hasTransitioned ? "final" : "initial")}
+          animate={hasTransitioned ? "final" : "initial"}
           variants={titleVariants}
-          className="relative z-10 p-5 md:p-6 origin-top-left"
+          className="relative z-10 p-5 md:p-6 origin-top-left cursor-pointer transition-opacity"
+          transition={{ duration: 1.5, ease: "easeOut" }}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
           <div className="flex flex-col gap-6 mt-4">
             <motion.h1 
@@ -257,8 +260,12 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                       return (
                           <motion.div 
                              key={item.id} 
-                             onClick={() => scrollToSection(i)}
-                             className="flex items-center justify-between w-full group cursor-pointer py-0.5 pointer-events-auto"
+                             onClick={(e) => {
+                                 e.stopPropagation()
+                                 scrollToSection(i)
+                             }}
+                             className="flex items-center justify-between w-full group cursor-pointer py-0.5"
+                             style={{ pointerEvents: pointerEventsFinal }}
                              initial="hidden"
                              animate={isActive ? "visible" : "hidden"}
                              whileHover="visible"

@@ -18,13 +18,7 @@ export default function Home() {
   const [isMiniGameVisible, setIsMiniGameVisible] = useState(false)
   const miniGameRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    // Check for existing registration
-    const storedId = localStorage.getItem('attendanceId')
-    if (storedId) {
-      setAttendanceId(storedId)
-    }
-  }, [])
+
 
   useEffect(() => {
 

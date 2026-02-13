@@ -875,7 +875,7 @@ export default function ShuffleCardPage() {
   }, []);
 
   return (
-    <div className="mini-game-v2-root relative w-full min-h-screen bg-[url('/mini-app.png')] bg-cover bg-center bg-no-repeat text-[#1f1f1f] overflow-hidden">
+    <div className="mini-game-v2-root relative w-full min-h-screen bg-[url('/mini-app.png')] bg-cover bg-center bg-no-repeat text-[#1f1f1f] overflow-hidden ">
       {/* Animation 1: Linear to Circular */}
       <div
         ref={container1Ref}
