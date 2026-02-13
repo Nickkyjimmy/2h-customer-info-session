@@ -164,7 +164,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
            initial={{ opacity: 0, x: -50 }}
            whileInView={{ opacity: 1, x: 0 }}
            transition={{ duration: 1 }}
-           className="flex justify-center items-center gap-4"
+           className="flex justify-center items-center gap-4 order-2 md:order-1"
         >
            <div className="relative w-full aspect-[3/4] max-w-[1500px]">
              <Image 
@@ -183,7 +183,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
           viewport={{ once: true }}
-          className="relative z-10 w-full max-w-xl mx-auto"
+          className="relative z-10 w-full max-w-xl mx-auto order-1 md:order-2"
         >
         {/* Renaissance Frame Border */}
         <div className="relative">
