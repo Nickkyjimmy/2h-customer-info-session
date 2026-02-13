@@ -106,7 +106,9 @@ export default function Home() {
       <AgendaGallery />
       
       {/* Check-In Form Section */}
-      <CheckInForm onSuccess={handleCheckInSuccess} />
+      <div id="check-in-form-section">
+        <CheckInForm onSuccess={handleCheckInSuccess} />
+      </div>
 
       {/* Mini Game Section */}
       <div ref={miniGameRef} className="min-h-screen relative">

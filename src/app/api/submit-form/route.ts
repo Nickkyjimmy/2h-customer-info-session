@@ -36,54 +36,53 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Use a transaction if sessionId is provided to decrement quantities
-    let attendance;
-    if (sessionId) {
-      attendance = await prisma.$transaction(async (tx: any) => {
-        // 1. Check if session has remaining quantity
-        const session = await tx.session.findUnique({
-          where: { id: sessionId },
-        })
+    let targetOfficeId = null as string | null;
 
-        if (!session) {
-          throw new Error('Session not found')
-        }
+    if (body.officeId) {
+        targetOfficeId = body.officeId;
+    } else if (located_in) {
+      // Find office by name if located_in is provided
+      const office = await prisma.office.findFirst({
+        where: { name: located_in }
+      });
+      if (office) {
+        targetOfficeId = office.id;
+      }
+    }
 
-        if (session.quantities <= 0) {
-          throw new Error('This session is full')
-        }
-
-        // 2. Create attendance
-        const newAttendance = await tx.attendance.create({
-          data: {
+    // Create new attendance record and update office quantity
+    const attendance = await prisma.$transaction(async (tx) => {
+        // Prepare data for attendance creation
+        const attendanceData: any = {
             domain,
             questions: questions || null,
             attend: true,
-            located_in: located_in || null,
-            sessionId: sessionId,
-          } as any,
-        })
+            officeId: targetOfficeId, 
+            sessionId: sessionId || null,
+        };
 
-        // 3. Decrement session quantity
-        await tx.session.update({
-          where: { id: sessionId },
-          data: { quantities: { decrement: 1 } },
-        })
+        const newAttendance = await tx.attendance.create({
+            data: attendanceData
+        });
 
-        return newAttendance
-      })
-    } else {
-      // Create new attendance record without session
-      attendance = await prisma.attendance.create({
-        data: {
-          domain,
-          questions: questions || null,
-          attend: true, // Set to true on submission
-          located_in: located_in || null,
-          sessionId: null,
-        } as any,
-      })
-    }
+        // Decrement office quantity if an office was selected
+        if (targetOfficeId) {
+             const office = await tx.office.findUnique({
+                where: { id: targetOfficeId }
+             });
+             
+             if (office && office.quantity > 0) {
+                 await tx.office.update({
+                     where: { id: targetOfficeId },
+                     data: { quantity: { decrement: 1 } }
+                 });
+             } else if (office && office.quantity <= 0) {
+                 throw new Error("Selected office is full");
+             }
+        }
+
+        return newAttendance;
+    });
 
     // Return the attendance ID for redirect
     return NextResponse.json(

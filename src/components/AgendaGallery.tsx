@@ -107,8 +107,8 @@ export default function AgendaGallery() {
                         transition={{ duration: 0.5, ease: "circOut" }}
                     >
                         {/* Background Image / Main Visual */}
-                        <div className="absolute inset-0 z-0">
-                           <div className="absolute inset-0  z-10" /> {/* Overlay for readability */}
+                        <div className="absolute inset-0 z-0 ">
+                           <div className="absolute inset-0 bg-black/10 z-10" /> {/* Overlay for readability */}
                            <Image
                                 src={item.src}
                                 alt={item.title}
@@ -142,6 +142,23 @@ export default function AgendaGallery() {
                                 >
                                     {item.description}
                                 </motion.p>
+
+                                {item.title === 'THE LIVING PORTRAIT' && (
+                                    <motion.button
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.6, duration: 0.8 }}
+                                        onClick={() => {
+                                            const section = document.getElementById('check-in-form-section');
+                                            if (section) {
+                                                section.scrollIntoView({ behavior: 'smooth' });
+                                            }
+                                        }}
+                                        className="mt-6 px-8 py-3 bg-white text-black font-bold text-lg rounded-full hover:bg-gray-200 transition-colors duration-300"
+                                    >
+                                        Đăng kí ngay
+                                    </motion.button>
+                                )}
                             </div>
 
                             {/* Right Side: Visuals for Special Items */}

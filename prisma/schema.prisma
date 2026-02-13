@@ -12,19 +12,13 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum Location {
-  HANOI
-  HCM
-  DANANG
-}
-
 model Attendance {
   id           String   @id @default(cuid())
   domain       String   @unique
   questions    String?  @db.Text
   cardReceive  String?  @map("card_receive")
   attend       Boolean  @default(false)
-  located_in   Location? @map("located_in")
+  officeId     String?  @map("office_id")
   sessionId    String?  @map("session_id")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
@@ -32,6 +26,7 @@ model Attendance {
   // Relations
   card         Card?    @relation(fields: [cardReceive], references: [id])
   session      Session? @relation(fields: [sessionId], references: [id])
+  office       Office?  @relation(fields: [officeId], references: [id])
 
   @@map("attendances")
 }
@@ -39,15 +34,30 @@ model Attendance {
 model Session {
   id           String       @id @default(cuid())
   name         String
-  quantities   Int
-  located_in   Location     @map("located_in")
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @updatedAt @map("updated_at")
 
   // Relation to Attendance
   attendances  Attendance[]
+  offices      Office[]
 
   @@map("sessions")
+}
+
+model Office {
+  id           String       @id @default(cuid())
+  name         String
+  quantity     Int          @default(0)
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+   sessionId    String?  @map("session_id")
+
+  // Relations
+  attendances  Attendance[]
+  session      Session? @relation(fields: [sessionId], references: [id])
+
+
+  @@map("offices")
 }
 
 model Card {

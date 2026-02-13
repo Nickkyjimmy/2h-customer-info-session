@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { validateDomainWithError } from '@/lib/validators'
 
 type Location = 'HANOI' | 'HCM' | 'DANANG';
@@ -18,35 +18,47 @@ interface CheckInFormProps {
 
 export default function CheckInForm({ onSuccess }: CheckInFormProps) {
   const router = useRouter()
+  const sectionRef = useRef<HTMLElement>(null)
+  
+  // Parallax effect for reward image
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  })
+  
+  const yParallax = useTransform(scrollYProgress, [0, 1], [-100, 100])
+
   const [domain, setDomain] = useState('')
   const [questions, setQuestions] = useState('')
-  const [location, setLocation] = useState<Location | ''>('')
+  const [location, setLocation] = useState('')
   const [sessionId, setSessionId] = useState('')
   const [sessions, setSessions] = useState<Session[]>([])
+  const [selectedOffice, setSelectedOffice] = useState('')
+  const [offices, setOffices] = useState<any[]>([])
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
+  const [regId, setRegId] = useState<string | null>(null)
 
   useEffect(() => {
-    if (location) {
-      fetch(`/api/sessions?location=${location}`)
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) {
-            setSessions(data)
-          } else {
-            console.error('API Error:', data)
-            setSessions([])
-          }
-        })
-        .catch(err => {
-          console.error('Error fetching sessions:', err)
-          setSessions([])
-        })
-    } else {
-      setSessions([])
-      setSessionId('')
-    }
-  }, [location])
+    // Fetch offices
+    fetch('/api/offices')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setOffices(data)
+        } else {
+          console.error('API Error:', data)
+          setOffices([])
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching offices:', err)
+        setOffices([])
+      })
+  }, [])
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -72,6 +84,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
           domain, 
           questions,
           located_in: location || null,
+          officeId: selectedOffice || null,
           sessionId: sessionId || null
         }),
       })
@@ -86,11 +99,8 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
 
       // Handle success
       if (data.id) {
-        if (onSuccess) {
-          onSuccess(data.id)
-        } else {
-          router.push(`/mini-game/${data.id}`)
-        }
+        setRegId(data.id)
+        setShowSuccessDialog(true)
       }
     } catch (err) {
       console.error('Error submitting form:', err)
@@ -99,8 +109,26 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
     }
   }
 
+  const handleCloseDialog = () => {
+    setShowSuccessDialog(false)
+    setDomain('')
+    setQuestions('')
+    setLocation('')
+    setSelectedOffice('')
+    setRegId(null)
+    setIsSubmitting(false)
+    // Optionally refresh offices to update slot counts
+    fetch('/api/offices')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setOffices(data)
+      })
+  }
+
+  const allSlotsFull = offices.length > 0 && offices.every(o => o.quantity <= 0)
+
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
+    <section ref={sectionRef} className="relative w-full min-h-screen flex items-center justify-center overflow-hidden py-10">
       {/* Background Image */}
       <Image
         src="/agenda/11.png"
@@ -117,26 +145,18 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         {/* Left Column: Reward Image */}
         <motion.div
+           style={{ y: yParallax }}
            initial={{ opacity: 0, x: -50 }}
            whileInView={{ opacity: 1, x: 0 }}
            transition={{ duration: 1 }}
            className="hidden lg:flex justify-center items-center gap-4"
         >
-           <div className="relative w-full aspect-[3/4] max-w-[300px]">
+           <div className="relative w-full aspect-[3/4] max-w-[1500px]">
              <Image 
                src="/reward/mat-truoc.png" 
                alt="Customer 2H Reward Front" 
                fill 
-               className="object-contain drop-shadow-[0_0_50px_rgba(251,191,36,0.3)] hover:scale-105 transition-transform duration-500"
-               priority
-             />
-           </div>
-           <div className="relative w-full aspect-[3/4] max-w-[300px]">
-             <Image 
-               src="/reward/mat-sau.png" 
-               alt="Customer 2H Reward Back" 
-               fill 
-               className="object-contain drop-shadow-[0_0_50px_rgba(251,191,36,0.3)] hover:scale-105 transition-transform duration-500"
+               className="object-contain drop-shadow-[0_0_50px_rgba(251,191,36,0.3)] -rotate-12 scale-[1.4] hover:scale-[1.5] transition-transform duration-500"
                priority
              />
            </div>
@@ -167,6 +187,15 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
 
           {/* Form Content - with padding to avoid frame edges */}
           <div className="relative z-10 bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-md p-6 md:p-16 m-4">
+            {/* Top Decorative Border */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%+300px)] h-24 pointer-events-none z-20">
+              <Image src="/frame-test.png" alt="Top Border" fill className="object-contain object-center" />
+            </div>
+            
+            {/* Bottom Decorative Border */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-[calc(100%+300px)] h-24 pointer-events-none z-20">
+              <Image src="/frame-test.png" alt="Bottom Border" fill className="object-contain object-center rotate-180" />
+            </div>
             {/* Title */}
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -187,7 +216,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-center text-sm md:text-base text-amber-200/70 mb-8 font-serif italic"
             >
-              Đăng ký ngay session User Waik-in với số lượng có hạn sau buổi training để nhận đặc quyền thực chiến chạm tim User và cơ hội sở hữu ngay <span className="font-bold text-amber-100">chiếc bình Customer 2H cực phẩm</span>!
+            Số lượng có hạn! Đăng ký User Walk-in để sở hữu ngay <span className="font-bold text-amber-100">chiếc bình Customer 2H cực phẩm</span>!
             </motion.p>
 
             {/* Decorative divider */}
@@ -215,50 +244,60 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                   id="domain"
                   value={domain}
                   onChange={(e) => setDomain(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 placeholder-amber-900/50 
+                  className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 placeholder-[#F57799]/50 
                            focus:outline-none focus:ring-2
                            transition-all duration-300 font-serif
                            shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
                   style={{
-                    borderColor: '#D42A87'
+                    borderColor: '#EFD4B4'
                   }}
                   placeholder="your.name@mservice.com.vn"
                   required
                 />
-                <p className="text-xs text-amber-200/60 mt-1 font-serif italic">
-                  Must be @mservice.com.vn or @momo.vn
-                </p>
+              
               </motion.div>
 
-              {/* Location Select */}
+
+
+              {/* Office Select */}
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.55 }}
               >
                 <label 
-                  htmlFor="location" 
+                  htmlFor="office-location" 
                   className="block text-sm font-serif text-amber-100 mb-2 tracking-wide uppercase"
                 >
                   Văn Phòng
                 </label>
                 <select
-                  id="location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value as Location)}
+                  id="office-location"
+                  value={selectedOffice}
+                  onChange={(e) => setSelectedOffice(e.target.value)}
                   className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 
                            focus:outline-none focus:ring-2
                            transition-all duration-300 font-serif
-                           shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] appearance-none"
+                           shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] appearance-none disabled:opacity-50"
                   style={{
-                    borderColor: '#D42A87'
+                    borderColor: '#EFD4B4'
                   }}
-                  required
+                  required={!allSlotsFull}
+                  disabled={allSlotsFull}
                 >
-                  <option value="" disabled className="bg-slate-900">Chọn văn phòng của bạn</option>
-                  <option value="HCM" className="bg-slate-900">Hồ Chí Minh</option>
-                  <option value="HANOI" className="bg-slate-900">Hà Nội</option>
-                  <option value="DANANG" className="bg-slate-900">Đà Nẵng</option>
+                  <option value="" className="bg-slate-900">
+                    {offices.length > 0 && offices.every(o => o.quantity <= 0) ? 'Hết Slot' : 'Chọn văn phòng'}
+                  </option>
+                  {offices
+                    .sort((a, b) => {
+                      const order: Record<string, number> = { 'Hồ Chí Minh': 1, 'Hà Nội': 2, 'Đà Nẵng': 3 };
+                      return (order[a.name] || 99) - (order[b.name] || 99);
+                    })
+                    .map((office) => (
+                      <option key={office.id} value={office.id} className="bg-slate-900" disabled={office.quantity <= 0}>
+                        {office.name} {office.quantity > 0 ? `(${office.quantity} slots)` : '(Hết Slot)'}
+                      </option>
+                    ))}
                 </select>
               </motion.div>
 
@@ -269,28 +308,41 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                 transition={{ duration: 0.6, delay: 0.6 }}
               >
                 <label 
-                  htmlFor="session" 
+                  htmlFor="office" 
                   className="block text-sm font-serif text-amber-100 mb-2 tracking-wide uppercase"
                 >
                   Chọn Session - User Walk-in
                 </label>
                 <select
-                  id="session"
-                  value={sessionId}
-                  onChange={(e) => setSessionId(e.target.value)}
+                  id="office"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value as any)}
                   className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 
                            focus:outline-none focus:ring-2
                            transition-all duration-300 font-serif
-                           shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] appearance-none disabled:opacity-50"
+                            shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] appearance-none disabled:opacity-50"
                   style={{
-                    borderColor: '#D42A87'
+                    borderColor: '#EFD4B4'
                   }}
-                  disabled={!location}
+                  required={!allSlotsFull}
+                  disabled={allSlotsFull}
                 >
-                  <option value="" className="bg-slate-900">{location ? 'Chọn session' : 'Vui lòng chọn văn phòng trước'}</option>
-                  {sessions.map((s) => (
-                    <option key={s.id} value={s.id} className="bg-slate-900">
-                      {s.name} ({s.quantities} slots)
+                  <option value="" className="bg-slate-900">{allSlotsFull ? 'Hết Slot' : 'Chọn session'}</option>
+                  {[
+                    "The Patron",
+                    "The Reformer",
+                    "The Merchant of Venice",
+                    "The Joybringer",
+                    "The Artisan",
+                    "The Alchemist",
+                    "The Grandmaster",
+                    "The Pathfinder",
+                    "The Voyager",
+                    "The Visionary",
+                    "The Strategist"
+                  ].map((name) => (
+                    <option key={name} value={name} className="bg-slate-900">
+                      {name}
                     </option>
                   ))}
                 </select>
@@ -306,19 +358,19 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                   htmlFor="questions" 
                   className="block text-sm font-serif text-amber-100 mb-2 tracking-wide uppercase"
                 >
-                  Leave Your Questions
+                  Câu hỏi dành cho chương trình
                 </label>
                 <textarea
                   id="questions"
                   value={questions}
                   onChange={(e) => setQuestions(e.target.value)}
-                  rows={5}
-                  className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 placeholder-amber-900/50 
+                  rows={2}
+                  className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 placeholder-[#F57799]/50 
                            focus:outline-none focus:ring-2
                            transition-all duration-300 resize-none font-serif
                            shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
                   style={{
-                    borderColor: '#D42A87'
+                    borderColor: '#EFD4B4'
                   }}
                   placeholder="Share your thoughts and questions..."
                   required
@@ -351,14 +403,14 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                   className="w-full relative group overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {/* Button border frame */}
-                  <div className="absolute inset-0 p-[2px]" style={{ background: '#D42A87' }}>
+                  <div className="absolute inset-0 p-[2px]" style={{ background: '#EFD4B4' }}>
                     <div className="absolute inset-0 group-hover:brightness-110 transition-all duration-500" 
-                         style={{ background: '#D42A87' }} />
+                         style={{ background: '#EFD4B4' }} />
                   </div>
                   
                   {/* Button content */}
-                  <span className="relative block px-8 py-4 text-lg font-bold text-amber-50 tracking-widest uppercase
-                                 font-serif group-hover:text-white transition-colors duration-300
+                  <span className="relative block px-8 py-4 text-lg font-bold text-black tracking-widest uppercase
+                                 font-serif group-hover:text-black transition-colors duration-300
                                  shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
                     {isSubmitting ? 'Submitting...' : 'Submit'}
                   </span>
@@ -385,6 +437,65 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
         </div>
         </motion.div>
       </div>
+      <AnimatePresence>
+        {showSuccessDialog && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              onClick={handleCloseDialog}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-md bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 border-2 border-[#EFD4B4] shadow-[0_0_50px_rgba(239,212,180,0.2)]"
+            >
+              {/* Decorative corners */}
+              <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-[#EFD4B4] -translate-x-1 -translate-y-1" />
+              <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-[#EFD4B4] translate-x-1 -translate-y-1" />
+              <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-[#EFD4B4] -translate-x-1 translate-y-1" />
+              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-[#EFD4B4] translate-x-1 translate-y-1" />
+
+              <div className="text-center">
+                <div className="mb-6 flex justify-center">
+                  <div className="w-16 h-16 rounded-full border-2 border-green-500/50 flex items-center justify-center">
+                    <motion.svg 
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
+                      className="w-8 h-8 text-green-500" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor" 
+                      strokeWidth={3}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </motion.svg>
+                  </div>
+                </div>
+
+                <h3 className="text-2xl font-serif text-[#EFD4B4] mb-4 uppercase tracking-wider">
+                  Gửi form thành công
+                </h3>
+                <p className="text-amber-100/90 font-serif italic mb-8 leading-relaxed">
+                  Cảm ơn anh/chị đã gửi cầu hỏi<br />
+                  Hẹn anh/chị tại buổi training nhé.
+                </p>
+
+                <button
+                  onClick={handleCloseDialog}
+                  className="w-full py-3 bg-[#EFD4B4] text-black font-bold uppercase tracking-widest hover:brightness-110 transition-all duration-300 shadow-[0_5px_15px_rgba(239,212,180,0.3)]"
+                >
+                  Tiếp tục
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }

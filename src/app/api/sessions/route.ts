@@ -13,8 +13,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Prisma Client not updated' }, { status: 500 })
     }
 
-    const sessions = await (prisma as any).session.findMany({
-      where: location ? { located_in: location as any } : {},
+    const sessions = await prisma.session.findMany({
       orderBy: { name: 'asc' }
     })
 

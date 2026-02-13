@@ -61,6 +61,63 @@ async function main() {
     }
   }
 
+  // Office seeding
+  const offices = [
+    { name: 'Hồ Chí Minh', quantity: 18 },
+    { name: 'Hà Nội', quantity: 13 },
+    { name: 'Đà Nẵng', quantity: 3 },
+  ]
+
+  for (const office of offices) {
+    const existingOffice = await prisma.office.findFirst({
+      where: { name: office.name }
+    })
+
+    if (!existingOffice) {
+      console.log(`Creating office: ${office.name}`)
+      await prisma.office.create({
+        data: {
+          name: office.name,
+          quantity: office.quantity
+        }
+      })
+    } else {
+        console.log(`Updating office quantity: ${office.name}`)
+        await prisma.office.update({
+            where: { id: existingOffice.id },
+            data: { quantity: office.quantity }
+        })
+    }
+  }
+
+  // Session seeding
+  const sessions = [
+    "The Patron",
+    "The Reformer",
+    "The Merchant of Venice", 
+    "The Joybringer", 
+    "The Artisan", 
+    "The Alchemist", 
+    "The Grandmaster", 
+    "The Pathfinder", 
+    "The Voyager", 
+    "The Visionary", 
+    "The Strategist"
+  ]
+
+  for (const name of sessions) {
+    const existingSession = await prisma.session.findFirst({
+      where: { name }
+    })
+
+    if (!existingSession) {
+      console.log(`Creating session: ${name}`)
+      await prisma.session.create({
+        data: { name }
+      })
+    }
+  }
+
   console.log('Seeding finished.')
 }
 
