@@ -163,6 +163,7 @@ export default function AgendaGallery() {
                                     <motion.button
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
+                                        whileHover={{ scale: 0.95 }}
                                         transition={{ delay: 0.6, duration: 0.8 }}
                                         onClick={() => {
                                             const section = document.getElementById('check-in-form-section');
@@ -170,7 +171,7 @@ export default function AgendaGallery() {
                                                 section.scrollIntoView({ behavior: 'smooth' });
                                             }
                                         }}
-                                        className="mt-6 px-6 py-2 bg-white text-black font-bold text-sm rounded-full hover:bg-gray-200 transition-colors duration-300"
+                                        className="mt-6 px-4 py-1.5 bg-[#D42B87] text-white font-bold text-xs rounded-full shadow-[0_0_20px_rgba(212,43,135,0.5)] whitespace-nowrap w-fit"
                                     >
                                         Đăng kí ngay
                                     </motion.button>

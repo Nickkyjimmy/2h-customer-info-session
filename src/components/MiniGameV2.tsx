@@ -792,15 +792,6 @@ export default function ShuffleCardPage() {
       </div>
 
 
-
-      <footer>
-        <div className="footer-container">
-          <div className="footer-content">
-            <p>© Customer2h. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
-
       <style jsx global>{`
         /* Scoped global styles for MiniGameV2 to support dynamic elements */
 
