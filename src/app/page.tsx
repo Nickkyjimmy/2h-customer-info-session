@@ -105,7 +105,8 @@ export default function Home() {
       <AgendaGallery onIndexChange={setAgendaActiveIndex} />
       
       {/* Check-In Form Section */}
-      <div id="check-in-form-section">
+      <div id="check-in-form-section" className="relative">
+        <div id="form" className="absolute -top-24 left-0 w-full h-0" />
         <CheckInForm onSuccess={handleCheckInSuccess} />
       </div>
 
