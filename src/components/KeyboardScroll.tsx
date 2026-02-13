@@ -241,6 +241,7 @@ export default function KeyboardScroll({ onLoadComplete, onProgress }: { onLoadC
           <div className="absolute inset-0 z-20 pointer-events-none"></div>
         )}
         {isLoaded ? (
+             <>
              <Canvas 
                 gl={{ antialias: false, powerPreference: "high-performance", stencil: false, depth: false }} 
                 camera={{ position: [0, 0, 5], fov: 35 }}
@@ -250,10 +251,50 @@ export default function KeyboardScroll({ onLoadComplete, onProgress }: { onLoadC
             >
                 <Scene heroImages={heroImages} openingImages={openingImages} scrollYProgress={smoothProgress} />
             </Canvas>
+
+            {/* Intro Text Overlay */}
+            <IntroText scrollYProgress={smoothProgress} />
+            </>
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black"></div>
         )}
       </div>
     </div>
   )
+}
+
+function IntroText({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
+    // Reveal text between 0.7 and 1.0 progress for longer duration
+    const opacity = useTransform(scrollYProgress, [0.7, 0.8, 0.95, 1.0], [0, 1, 1, 0])
+    const y = useTransform(scrollYProgress, [0.7, 0.8], [30, 0])
+    const blur = useTransform(scrollYProgress, [0.7, 0.8], ["blur(15px)", "blur(0px)"])
+    const bgOpacity = useTransform(scrollYProgress, [0.7, 0.8, 0.95, 1.0], [0, 0.6, 0.6, 0])
+
+    return (
+        <div className="absolute inset-0 z-30 pointer-events-none">
+            {/* Dark background overlay for readability */}
+            <motion.div 
+                style={{ opacity: bgOpacity }}
+                className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"
+            />
+
+            <motion.div 
+                style={{ opacity, y, filter: blur }}
+                className="absolute inset-0 flex items-center justify-center px-6"
+            >
+                <div className="max-w-4xl text-center">
+                    <h2 className="text-white text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
+                        Chào mừng bạn đến với <span className="text-white">Customer 2H Info Session</span>
+                    </h2>
+                    <p className="mt-4 text-white/50 text-lg md:text-xl font-medium uppercase tracking-widest italic">
+                        The New Era of Customer Experience
+                    </p>
+                    <div className="mt-8 h-px w-24 bg-white/30 mx-auto" />
+                    <p className="mt-8 text-white/90 text-lg md:text-2xl font-light leading-relaxed max-w-2xl mx-auto">
+                        Phòng tranh được mở vào 26.2 sẽ gồm có 7 phòng
+                    </p>
+                </div>
+            </motion.div>
+        </div>
+    )
 }
