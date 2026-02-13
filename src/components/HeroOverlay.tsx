@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
+import { cn } from '@/lib/utils'
 
 export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { isVisible: boolean; isMiniGameVisible?: boolean }) {
   const { scrollY } = useScroll()
@@ -99,9 +100,9 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
   const titleVariants = {
     initial: { x: '0px', y: '0px', scale: 1, opacity: 1, pointerEvents: 'auto' as const },
     final: isMobile 
-      ? { opacity: 0, pointerEvents: 'none' as const, transition: { duration: 0.5 } as const }
+      ? { x: '0px', y: '-40vh', scale: 0.7, opacity: 1, pointerEvents: 'auto' as const, transition: { duration: 1.5, ease: "easeOut" } as const }
       : { x: '-28vw', y: '-22vh', scale: 0.85, opacity: 1, pointerEvents: 'auto' as const, transition: { duration: 1.5, ease: "easeOut" } as const },
-    hidden: { opacity: 0, pointerEvents: 'none' as const, transition: { duration: 0.5 } } // Hide when past gallery
+    hidden: { opacity: 0, pointerEvents: 'none' as const, transition: { duration: 0.5 } }
   }
 
   const contentVariants = {
@@ -159,14 +160,23 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 20 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="font-bold tracking-tighter text-white leading-[0.9]"
+              className={cn(
+                "font-bold tracking-tighter text-white leading-[0.9]",
+                isMobile ? "text-center" : "text-left"
+              )}
             >
-              <div className="relative w-48 h-12 mb-2">
+              <div className={cn(
+                "relative w-48 h-12 mb-2",
+                isMobile ? "mx-auto" : ""
+              )}>
                 <Image 
                   src="/customer-2h-logo.svg" 
                   alt="Customer 2H Logo" 
                   fill 
-                  className="object-contain object-left"
+                  className={cn(
+                    "object-contain",
+                    isMobile ? "object-center" : "object-left"
+                  )}
                 />
               </div>
               <span className="text-4xl md:text-5xl">The </span>

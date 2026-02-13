@@ -85,6 +85,15 @@ export default function AgendaGallery() {
   // Range for New Canvas (Index 3)
   const newCanvasRange = ranges[3] || [0, 0]
 
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   return (
     <section
       ref={containerRef}
@@ -103,7 +112,7 @@ export default function AgendaGallery() {
                         className="absolute inset-0 w-full h-full flex items-center justify-center bg-transparent"
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+                        exit={{ opacity: 0, scale: 1.05, filter: isMobile ? 'none' : 'blur(10px)' }}
                         transition={{ duration: 0.5, ease: "circOut" }}
                     >
                         {/* Background Image / Main Visual */}

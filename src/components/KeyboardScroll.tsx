@@ -152,6 +152,15 @@ export default function KeyboardScroll({ onLoadComplete, onProgress }: { onLoadC
     restDelta: 0.0001
   })
 
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   // Optimized progressive image loading
   useEffect(() => {
     const loadedHero: HTMLImageElement[] = new Array(FRAME_COUNT)
@@ -236,7 +245,7 @@ export default function KeyboardScroll({ onLoadComplete, onProgress }: { onLoadC
                 gl={{ antialias: false, powerPreference: "high-performance", stencil: false, depth: false }} 
                 camera={{ position: [0, 0, 5], fov: 35 }}
                 className="w-full h-full"
-                dpr={[1, 1.5]}
+                dpr={isMobile ? [1, 1] : [1, 1.5]}
                 flat
             >
                 <Scene heroImages={heroImages} openingImages={openingImages} scrollYProgress={smoothProgress} />

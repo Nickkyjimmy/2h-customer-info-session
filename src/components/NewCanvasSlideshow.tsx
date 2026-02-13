@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence, MotionValue, useTransform, useMotionValue } from 'framer-motion'
 import Image from 'next/image'
 
@@ -98,8 +98,16 @@ const slides: {
 ]
 
 export default function NewCanvasSlideshow({ scrollYProgress, range }: { scrollYProgress?: MotionValue<number>, range?: number[] }) {
+  const [isMobile, setIsMobile] = useState(false)
   const fallbackScroll = useMotionValue(0)
   const scroll = scrollYProgress || fallbackScroll
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Global Section Range: Use passed range or fallback to default AgendaGallery logic (3/8 -> 4/8)
   const sectionStart = range ? range[0] : 3 / 8
@@ -118,19 +126,14 @@ export default function NewCanvasSlideshow({ scrollYProgress, range }: { scrollY
         const slideProgress = useTransform(scroll, [start, end], [0, 1])
         
         // Visibility: Fade In -> Hold -> Fade Out
-        // Fade in first 10%, Fade out last 10%
         const fadeInEnd = start + perSlide * 0.1
         const fadeOutStart = end - perSlide * 0.1
         
-        // For first slide, maybe start visible if coming from top? 
-        // But usually we want scroll trigger.
-        // Let's stick to standard fade in/out for smooth sequence.
         const opacity = useTransform(scroll, 
              [start, fadeInEnd, fadeOutStart, end], 
              [0, 1, 1, 0]
         )
         
-        // Pointer events logic: Only active when visible?
         const pointerEvents = useTransform(opacity, (v) => v > 0.5 ? 'auto' : 'none')
 
         return (
@@ -142,41 +145,33 @@ export default function NewCanvasSlideshow({ scrollYProgress, range }: { scrollY
               {slide.images.map((img) => {
                   const path = `/new-canvas/${slide.folder}/${img.name}`
                   
-                  // Default styling
                   let className = "object-contain"
                   if (img.customClass) className = img.customClass
                   else {
-                      // Fallback classes from previous logic
                       if (img.type === 'device') className = "absolute inset-0 w-full h-full object-contain z-0"
                       else if (img.type === 'popup') className = "absolute w-[80%] md:w-[60%] h-auto z-20 drop-shadow-2xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                       else if (img.type === 'logo') className = "absolute top-4 left-4 w-24 md:w-32 h-auto z-30 drop-shadow-md"
                       else if (img.type === 'logo-secondary') className = "absolute top-4 right-4 w-24 md:w-32 h-auto z-30 drop-shadow-md opacity-80"
                   }
 
-                  // === ANIMATION LOGIC ===
                   let styleStr: any = (img.type === 'device' ? { objectFit: 'contain' } : {})
                   
-                  // Device Scaling/Translation Logic
                   if (img.type === 'device') {
-                      // Get target values from config or defaults
-                      const targetScale = img.animate?.scale || 1.3
+                      const targetScale = isMobile ? 1.1 : (img.animate?.scale || 1.3)
                       const startScale = img.initial?.scale || 1
                       
-                      // Sequence: Device animates in FIRST half of slide (0 -> 0.5)
                       const sMap = useTransform(slideProgress, [0, 0.5], [startScale, targetScale])
                       styleStr.scale = sMap
                       
-                      // Apply X/Y if defined in animate config
-                      // Default to 0 movement if not specified
                       if (img.animate?.x !== undefined || img.initial?.x !== undefined) {
-                           const targetX = img.animate?.x ?? 0
+                           const targetX = isMobile ? (img.animate?.x / 2 || 0) : (img.animate?.x ?? 0)
                            const startX = img.initial?.x ?? 0
                            const xMap = useTransform(slideProgress, [0, 0.5], [startX, targetX])
                            styleStr.x = xMap
                       }
                       
                       if (img.animate?.y !== undefined || img.initial?.y !== undefined) {
-                           const targetY = img.animate?.y ?? 0
+                           const targetY = isMobile ? (img.animate?.y / 2 || 0) : (img.animate?.y ?? 0)
                            const startY = img.initial?.y ?? 0
                            const yMap = useTransform(slideProgress, [0, 0.5], [startY, targetY])
                            styleStr.y = yMap
