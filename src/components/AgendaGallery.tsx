@@ -26,14 +26,14 @@ export default function AgendaGallery({
 
   // Memoize agenda items to prevent reference churn
   const agendaItems = useMemo(() => [
-    { src: '/agenda/4.png', title: 'CHECK IN', description: 'Nơi nhận quà và tham quan không gian thưởng lãm nghệ thuật' },
-    { src: '/agenda/5.png', title: 'THE FIRST SKETCH', description: 'Xem lại hành trình trải qua với Customer 2H' },
-    { src: '/agenda/6.png', title: 'FINDING THE MUSE', description: 'Lắng nghe vị quân chủ giải thích tầm quan trọng của việc gặp gỡ "Nàng Muse"' },
-    { src: '/agenda/7.png', title: 'THE NEW CANVAS', description: 'Giới thiệu Collab Hub & Hệ thống đặc quyền (Merch) dành cho Manager +' },
-    { src: '/agenda/8.png', title: 'THE SACRED VOW', description: 'Ký kết bản cam kết với người dùng' },
-    { src: '/agenda/9.png', title: 'MASTERPIECE CREATORS', description: 'Chiêm ngưỡng những "Idol" giới Customer 2H với kỷ lục thấu cảm User. Vào để học bí kíp hoặc đơn giản là để "GATO" lấy động lực thăng hạng.' },
-    { src: '/agenda/4.png', title: 'THE ART OF TOUCH', description: 'Bỏ túi bí kíp kỹ năng giải mã User với Chuyên gia: Nói chuyện với User là một nghệ thuật, và người đặt câu hỏi không bị "quê" chính là một nghệ sĩ. Gặp gỡ chuyên gia sẽ giúp bạn "mở khóa" trái tim User không cần búa. Học cách hỏi sao cho "nghệ", thoát kiếp người lạ từng quen mỗi khi đối diện khách hàng.' },
-    { src: '/agenda/5.png', title: 'THE LIVING PORTRAIT', description: 'Hoạt động Walk-in – Trực tiếp chạm vào trải nghiệm thực của User cho 34 Managers+ đăng ký sớm' },
+    { src: '/agenda/4.png', title: 'CHECK IN', time: '14:00 - 14:20', description: 'Nơi nhận quà và tham quan không gian thưởng lãm nghệ thuật' },
+    { src: '/agenda/5.png', title: 'THE FIRST SKETCH', time: '14:20 - 14:30', description: 'Xem lại hành trình trải qua với Customer 2H' },
+    { src: '/agenda/6.png', title: 'FINDING THE MUSE', time: '14:30 - 14:45', description: 'Lắng nghe vị quân chủ giải thích tầm quan trọng của việc gặp gỡ "Nàng Muse"' },
+    { src: '/agenda/7.png', title: 'THE NEW CANVAS', time: '14:45 - 14:50', description: 'Giới thiệu Collab Hub & Hệ thống đặc quyền (Merch) dành cho Manager +' },
+    { src: '/agenda/8.png', title: 'THE SACRED VOW', time: '14:50 - 14:55', description: 'Ký kết bản cam kết với người dùng' },
+    { src: '/agenda/9.png', title: 'MASTERPIECE CREATORS', time: '14:55 - 15:00', description: 'Chiêm ngưỡng những "Idol" giới Customer 2H với kỷ lục thấu cảm User. Vào để học bí kíp hoặc đơn giản là để "GATO" lấy động lực thăng hạng.' },
+    { src: '/agenda/4.png', title: 'THE ART OF TOUCH', time: '15:00 - 16:00', description: 'Bỏ túi bí kíp kỹ năng giải mã User với Chuyên gia: Nói chuyện với User là một nghệ thuật, và người đặt câu hỏi không bị "quê" chính là một nghệ sĩ. Gặp gỡ chuyên gia sẽ giúp bạn "mở khóa" trái tim User không cần búa. Học cách hỏi sao cho "nghệ", thoát kiếp người lạ từng quen mỗi khi đối diện khách hàng.' },
+    { src: '/agenda/5.png', title: 'THE LIVING PORTRAIT', time: '16:00 - 18:00', description: 'Hoạt động Walk-in – Trực tiếp chạm vào trải nghiệm thực của User cho 34 Managers+ đăng ký sớm' },
   ], [])
 
   // Data for the slider
@@ -152,6 +152,14 @@ export default function AgendaGallery({
                                     ? (item.title === 'THE NEW CANVAS' ? "text-left md:ml-10 pl-6 z-50 relative" : "text-left md:pl-10")
                                     : "text-center items-center max-w-4xl mx-auto"
                             )}>
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.1, duration: 0.8 }}
+                                    className="text-white text-sm md:text-base font-medium mb-2"
+                                >
+                                    {item.time}
+                                </motion.div>
                                 <motion.h2 
                                     className="text-2xl md:text-3xl lg:text-4xl font-black text-white tracking-tighter leading-[0.9]"
                                     initial={{ x: -50, opacity: 0 }}

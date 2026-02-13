@@ -16,7 +16,7 @@ export default function MobileTopLogo({ isParentLoaded = true }: { isParentLoade
         opacity: { duration: 0.5 },
         y: { duration: 0.8, delay: 0.5 } 
       }}
-      className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] md:hidden pointer-events-none"
+      className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] md:hidden pointer-events-none flex flex-col items-center"
     >
       <div className="relative w-28 h-10">
         <Image 
@@ -25,6 +25,10 @@ export default function MobileTopLogo({ isParentLoaded = true }: { isParentLoade
           fill 
           className="object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]"
         />
+      </div>
+      <div className="flex items-baseline gap-1 mt-1 drop-shadow-md text-white">
+        <span className="text-[10px] font-bold uppercase tracking-[0.15em]">The New</span>
+        <span className="font-[family-name:var(--font-dancing-script)] italic text-sm font-light">Era</span>
       </div>
     </motion.div>
   )

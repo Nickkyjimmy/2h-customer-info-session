@@ -283,10 +283,10 @@ function IntroText({ scrollYProgress }: { scrollYProgress: MotionValue<number> }
                 className="absolute inset-0 flex items-center justify-center px-6"
             >
                 <div className="max-w-4xl text-center">
-                  <p className="mt-4 text-white/50 text-lg md:text-xl font-medium uppercase tracking-widest italic">
+                  <p className="mt-4 text-white/50 text-lg md:text-xl font-bold uppercase tracking-widest italic">
                         The New Era of Customer Experience
                     </p>
-                     <div className="mt-8 h-px w-24 bg-white/30 mx-auto" />
+                     <div className="mt-4 h-px w-24 bg-white/30 mx-auto mb-5" />
                     <h2 className="text-white text- xl md:text-xl lg:text-4xl font-bold tracking-tight leading-tight">
                         Chào mừng bạn đến với <span className="text-white">Customer 2H Info Session</span>
                     </h2>
