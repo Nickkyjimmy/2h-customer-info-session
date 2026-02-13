@@ -109,9 +109,9 @@ export default function NewCanvasSlideshow({ scrollYProgress, range }: { scrollY
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  // Global Section Range: Use passed range or fallback to default AgendaGallery logic (3/8 -> 4/8)
-  const sectionStart = range ? range[0] : 3 / 8
-  const sectionEnd = range ? range[1] : 4 / 8
+  // Global Section Range: Use passed range or fallback to default AgendaGallery logic (3/13 -> 9/13)
+  const sectionStart = range ? range[0] : 3 / 13
+  const sectionEnd = range ? range[1] : 9 / 13
   const duration = sectionEnd - sectionStart
   const perSlide = duration / 3
 
@@ -180,16 +180,25 @@ export default function NewCanvasSlideshow({ scrollYProgress, range }: { scrollY
 
                   // 2. Popup Animation (Slide 1 logic applied to all popups)
                   if (img.type === 'popup') {
-                        // "Same as Slide 1": Start Center (offsets 15%, 5%), Move to End (-150px, 20px).
-                        // Sequence: Popup animates in SECOND half of slide (0.5 -> 1)
-                        // Scale 0 -> 1.6
-                        const pScale = useTransform(slideProgress, [0.5, 1], [0, 1.6])
+                        // Delay the appearance: Start later in the slide
+                        // Sequence: Popup animates in later half of slide (0.65 -> 0.95)
+                        const opacityMap = useTransform(slideProgress, [0.6, 0.7], [0, 1])
+                        const pScale = useTransform(slideProgress, [0.65, 0.95], [0, 1.6])
                         
-                        const pX = useTransform(slideProgress, [0.5, 1], ["15%", "-150px"])
-                        const pY = useTransform(slideProgress, [0.5, 1], ["5%", "20px"])
+                        const pX = useTransform(slideProgress, [0.65, 0.95], ["15%", "-150px"])
+                        const pY = useTransform(slideProgress, [0.65, 0.95], ["5%", "20px"])
+                        styleStr.opacity = opacityMap
                         styleStr.scale = pScale
                         styleStr.x = pX
                         styleStr.y = pY
+                  }
+
+                  // 3. Logo Animation
+                  if (img.type === 'logo' || img.type === 'logo-secondary') {
+                    const lOpacity = useTransform(slideProgress, [0.7, 0.8], [0, 1])
+                    const lY = useTransform(slideProgress, [0.7, 0.8], [-20, 0])
+                    styleStr.opacity = lOpacity
+                    styleStr.y = lY
                   }
 
                   return (

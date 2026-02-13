@@ -39,8 +39,8 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
       { id: 'VIII', title: 'THE LIVING PORTRAIT' },
   ]
 
-  // Weights must match AgendaGallery logic: Index 3 (NEW CANVAS) is 3x
-  const weights = agendaList.map((_, i) => i === 3 ? 3 : 1)
+  // Weights must match AgendaGallery logic: Index 3 (NEW CANVAS) is 6x
+  const weights = agendaList.map((_, i) => i === 3 ? 6 : 1)
   const totalWeight = weights.reduce((a, b) => a + b, 0)
   
   const ranges = weights.map((w, i) => {

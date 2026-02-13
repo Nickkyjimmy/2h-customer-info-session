@@ -42,8 +42,8 @@ export default function AgendaGallery() {
 
   const specialTitles = ['FINDING THE MUSE', 'THE ART OF TOUCH', 'THE LIVING PORTRAIT', 'THE NEW CANVAS']
 
-  // Weights for scroll duration: 'THE NEW CANVAS' gets 3x duration
-  const weights = useMemo(() => agendaItems.map(item => item.title === 'THE NEW CANVAS' ? 3 : 1), [agendaItems])
+  // Weights for scroll duration: 'THE NEW CANVAS' gets 6x duration
+  const weights = useMemo(() => agendaItems.map(item => item.title === 'THE NEW CANVAS' ? 6 : 1), [agendaItems])
   const totalWeight = useMemo(() => weights.reduce((a, b) => a + b, 0), [weights])
 
   // Pre-calculate ranges to ensure stable tracking
