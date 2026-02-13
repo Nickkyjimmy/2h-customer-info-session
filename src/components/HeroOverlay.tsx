@@ -113,7 +113,7 @@ export default function HeroOverlay({
 
   // Variants for auto-transition
   const titleVariants = {
-    initial: { x: '0px', y: '0px', scale: 1, opacity: 1, pointerEvents: 'auto' as const },
+    initial: { x: '0px', y: '-20px', scale: 1, opacity: 1, pointerEvents: 'auto' as const },
     final: isMobile 
       ? { x: '0px', y: '-40vh', scale: 0.7, opacity: 1, pointerEvents: 'auto' as const, transition: { duration: 1.5, ease: "easeOut" } as const }
       : { x: '-28vw', y: '-22vh', scale: 0.85, opacity: 1, pointerEvents: 'auto' as const, transition: { duration: 1.5, ease: "easeOut" } as const },
@@ -121,7 +121,7 @@ export default function HeroOverlay({
   }
 
   const contentVariants = {
-    initial: { x: '0px', y: '0px', scale: 1, opacity: 1, pointerEvents: 'auto' as const },
+    initial: { x: '0px', y: '-20px', scale: 1, opacity: 1, pointerEvents: 'auto' as const },
     final: isMobile
       ? { opacity: 0, pointerEvents: 'none' as const, transition: { duration: 0.5 } as const }
       : { x: '-28vw', y: '18vh', scale: 0.85, opacity: 1, pointerEvents: 'auto' as const, transition: { duration: 1.5, ease: "easeOut" } as const },
