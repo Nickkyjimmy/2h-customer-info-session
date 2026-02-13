@@ -78,14 +78,13 @@ export default function HeroOverlay({
       window.scrollTo({ top: targetY, behavior: 'smooth' })
   }
 
-  // Track scroll to determine active section and visibility
+  // Track scroll to determine visibility of Table of Contents
   useMotionValueEvent(scrollY, "change", (latest) => {
       if (typeof window === 'undefined') return
       
       const heroHeight = window.innerHeight * 6
       const galleryHeight = totalWeight * window.innerHeight
       const galleryEnd = heroHeight + galleryHeight
-      const scrollableDistance = galleryHeight - window.innerHeight
 
       // Hide TOC if we've scrolled past the gallery
       if (latest > galleryEnd - window.innerHeight) {
@@ -93,20 +92,6 @@ export default function HeroOverlay({
       } else {
         if (isPastGallery) setIsPastGallery(false)
       }
-
-      if (latest < heroHeight) {
-          setActiveId('')
-          return
-      }
-
-      const currentGalleryScroll = latest - heroHeight
-      const progress = Math.max(0, Math.min(1, currentGalleryScroll / scrollableDistance))
-      
-      // Find active index based on ranges
-      const index = ranges.findIndex(([start, end]) => progress >= start && progress < end)
-      const finalIndex = index === -1 ? (progress >= 0.99 ? agendaList.length - 1 : 0) : index
-      
-      setActiveId(agendaList[finalIndex].id)
   })
 
   if (!isVisible) return null
