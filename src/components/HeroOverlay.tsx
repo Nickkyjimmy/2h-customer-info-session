@@ -5,12 +5,27 @@ import Image from 'next/image'
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
-export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { isVisible: boolean; isMiniGameVisible?: boolean }) {
+export default function HeroOverlay({ 
+  isVisible, 
+  isMiniGameVisible = false,
+  activeIndex = 0
+}: { 
+  isVisible: boolean; 
+  isMiniGameVisible?: boolean; 
+  activeIndex?: number;
+}) {
   const { scrollY } = useScroll()
   const [activeId, setActiveId] = useState('')
   const [hasTransitioned, setHasTransitioned] = useState(false)
   const [isPastGallery, setIsPastGallery] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+
+  // Sync activeId with activeIndex prop
+  useEffect(() => {
+    if (agendaList[activeIndex]) {
+      setActiveId(agendaList[activeIndex].id)
+    }
+  }, [activeIndex])
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768)
@@ -155,7 +170,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
           transition={{ duration: 1.5, ease: "easeOut" }}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          <div className="flex flex-col gap-6 mt-4">
+          <div className="flex flex-col gap-6 mt-5">
             <motion.h1 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 20 }}
@@ -166,7 +181,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
               )}
             >
               <div className={cn(
-                "relative w-[clamp(10rem,40vw,12rem)] h-12 mb-2",
+                "relative w-[clamp(10rem,40vw,12rem)] h-12 mb-2 ",
                 isMobile ? "mx-auto" : ""
               )}>
                 <Image 
@@ -231,13 +246,13 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                 animate={hasTransitioned ? "final" : "initial"}
                 variants={opacityVariantsInitial}
                 style={{ pointerEvents: pointerEventsInitial }}
-                className="flex flex-col gap-6 text-white/80 text-sm"
+                className="flex flex-col gap-4 text-white/80 text-sm"
               >
                  <motion.div
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.8 }}
-                    className="border-l-2 border-white/30 pl-4 py-1"
+                    className="border-l-2 border-white/30 pl-4 "
                  >
                     <p className="uppercase text-[clamp(0.5rem,1.2vw,0.6rem)] tracking-widest text-white/50 mb-1 font-semibold">Thời gian</p>
                     <p className="font-medium text-[clamp(0.7rem,2vw,0.9rem)] text-white">14:00 - 16:00</p>
@@ -251,8 +266,8 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                     className="border-l-2 border-white/30 pl-4 py-1"
                  >
                     <p className="uppercase text-[clamp(0.5rem,1.2vw,0.6rem)] tracking-widest text-white/50 mb-1 font-semibold">Địa điểm</p>
-                    <p className="font-medium text-[clamp(0.7rem,2vw,0.9rem)] text-white">Sảnh lầu 6,</p>
-                    <p className="opacity-80 text-[clamp(0.6rem,1.5vw,0.75rem)]">Tòa nhà Phú Mỹ Hưng, Văn Phòng Hồ Chí Minh</p>
+                    <p className="font-medium text-[clamp(0.7rem,2vw,0.9rem)] text-white">Văn Phòng MoMo, Sảnh lầu 6,</p>
+                    <p className="opacity-80 text-[clamp(0.6rem,1.5vw,0.75rem)]">Tòa nhà Phú Mỹ Hưng, Hồ Chí Minh</p>
                  </motion.div>
               </motion.div>
 
@@ -262,7 +277,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                  animate={hasTransitioned ? "final" : "initial"}
                  variants={opacityVariantsFinal}
                  style={{ pointerEvents: pointerEventsFinal }}
-                 className="absolute bottom-0 left-0 w-full md:w-[420px] flex flex-col gap-0.5 text-white"
+                 className="absolute bottom-10 left-0 w-full md:w-[420px] flex flex-col gap-0.5 text-white"
               >
                   <h3 className="text-[clamp(0.6rem,1.8vw,0.9rem)] font-bold mb-4 uppercase tracking-widest text-white/50">Event Agenda</h3>
                   {agendaList.map((item, i) => {

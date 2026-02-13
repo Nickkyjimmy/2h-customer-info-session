@@ -17,6 +17,7 @@ export default function Home() {
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [attendanceId, setAttendanceId] = useState<string | null>(null)
   const [isMiniGameVisible, setIsMiniGameVisible] = useState(false)
+  const [agendaActiveIndex, setAgendaActiveIndex] = useState(0)
   const miniGameRef = useRef<HTMLDivElement>(null)
 
 
@@ -90,7 +91,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      <HeroOverlay isVisible={isContentLoaded} isMiniGameVisible={isMiniGameVisible} />
+      <HeroOverlay isVisible={isContentLoaded} isMiniGameVisible={isMiniGameVisible} activeIndex={agendaActiveIndex} />
       <GlobalScrollIndicator isParentLoaded={isContentLoaded} />
       {/* <AgendaTransitionOverlay /> */}
       <KeyboardScroll 
@@ -99,7 +100,7 @@ export default function Home() {
       />
       
       {/* Agenda Gallery Section */}
-      <AgendaGallery />
+      <AgendaGallery onIndexChange={setAgendaActiveIndex} />
       
       {/* Check-In Form Section */}
       <div id="check-in-form-section">

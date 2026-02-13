@@ -10,9 +10,19 @@ import NewCanvasSlideshow from './NewCanvasSlideshow'
 // Helper for conditional classnames if cn util doesn't exist
 const classNames = (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' ')
 
-export default function AgendaGallery() {
+export default function AgendaGallery({
+    onIndexChange
+}: {
+    onIndexChange?: (index: number) => void
+}) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
+
+
+  // Call onIndexChange when activeIndex changes
+  useEffect(() => {
+    onIndexChange?.(activeIndex)
+  }, [activeIndex, onIndexChange])
 
   // Memoize agenda items to prevent reference churn
   const agendaItems = useMemo(() => [

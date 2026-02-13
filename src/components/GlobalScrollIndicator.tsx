@@ -15,9 +15,9 @@ export default function GlobalScrollIndicator({ isParentLoaded = true }: { isPar
         opacity: { duration: 0.5 },
         y: { duration: 0.8, delay: 1.0 } 
       }}
-      className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center gap-2 pointer-events-none"
+      className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center gap-2 pointer-events-none"
     >
-      <span className="text-white/40 uppercase text-[10px] tracking-[0.2em] font-medium">Scroll to explore</span>
+
       <motion.div 
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -25,6 +25,8 @@ export default function GlobalScrollIndicator({ isParentLoaded = true }: { isPar
       >
         <div className="w-1 h-1 bg-white/60 rounded-full" />
       </motion.div>
+              <span className="text-white/40 uppercase text-[10px] tracking-[0.2em] font-medium">Scroll to explore</span>
+
     </motion.div>
   )
 }
