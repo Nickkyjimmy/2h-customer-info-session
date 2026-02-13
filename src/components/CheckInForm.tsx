@@ -157,7 +157,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/40" />
 
       {/* Form Container */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-0 md:px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         {/* Left Column: Reward Image */}
         <motion.div
            style={{ y: yParallax }}
@@ -201,7 +201,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
           </div>
 
           {/* Form Content - with padding to avoid frame edges */}
-          <div className="relative z-10 bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-md p-6 md:p-16 m-4">
+          <div className="relative z-10 bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-md p-6 md:p-16 m-0 md:m-4">
             {/* Top Decorative Border */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%+300px)] h-24 pointer-events-none z-20">
               <Image src="/frame-test.png" alt="Top Border" fill className="object-contain object-center" />
