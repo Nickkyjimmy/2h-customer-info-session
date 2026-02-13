@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { validateDomainWithError } from '@/lib/validators'
 
-type Location = 'HANOI' | 'HCM' | 'DANANG';
+
 
 interface Session {
   id: string;
@@ -30,7 +30,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
 
   const [domain, setDomain] = useState('')
   const [questions, setQuestions] = useState('')
-  const [location, setLocation] = useState('')
+
   const [sessionId, setSessionId] = useState('')
   const [sessions, setSessions] = useState<Session[]>([])
   const [selectedOffice, setSelectedOffice] = useState('')
@@ -55,6 +55,22 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
       .catch(err => {
         console.error('Error fetching offices:', err)
         setOffices([])
+      })
+
+    // Fetch sessions
+    fetch('/api/sessions')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setSessions(data)
+        } else {
+          console.error('API Error:', data)
+          setSessions([])
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching sessions:', err)
+        setSessions([])
       })
   }, [])
 
@@ -83,7 +99,6 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
         body: JSON.stringify({ 
           domain, 
           questions,
-          located_in: location || null,
           officeId: selectedOffice || null,
           sessionId: sessionId || null
         }),
@@ -113,7 +128,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
     setShowSuccessDialog(false)
     setDomain('')
     setQuestions('')
-    setLocation('')
+    setSessionId('')
     setSelectedOffice('')
     setRegId(null)
     setIsSubmitting(false)
@@ -315,8 +330,8 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                 </label>
                 <select
                   id="office"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value as any)}
+                  value={sessionId}
+                  onChange={(e) => setSessionId(e.target.value)}
                   className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 
                            focus:outline-none focus:ring-2
                            transition-all duration-300 font-serif
@@ -328,21 +343,9 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                   disabled={allSlotsFull}
                 >
                   <option value="" className="bg-slate-900">{allSlotsFull ? 'Hết Slot' : 'Chọn session'}</option>
-                  {[
-                    "The Patron",
-                    "The Reformer",
-                    "The Merchant of Venice",
-                    "The Joybringer",
-                    "The Artisan",
-                    "The Alchemist",
-                    "The Grandmaster",
-                    "The Pathfinder",
-                    "The Voyager",
-                    "The Visionary",
-                    "The Strategist"
-                  ].map((name) => (
-                    <option key={name} value={name} className="bg-slate-900">
-                      {name}
+                  {sessions.map((session) => (
+                    <option key={session.id} value={session.id} className="bg-slate-900">
+                      {session.name}
                     </option>
                   ))}
                 </select>
