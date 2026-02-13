@@ -16,14 +16,14 @@ export default function AgendaGallery() {
 
   // Memoize agenda items to prevent reference churn
   const agendaItems = useMemo(() => [
-    { src: '/agenda/4.png', title: 'CHECK IN', description: 'Chào mừng bạn đến với Customer 2H Info Session - The New Era of Customer Experience' },
-    { src: '/agenda/5.png', title: 'THE FIRST SKETCH', description: 'Đầu tiên, hãy tìm hiểu về Customer 2H thông qua các thông tin và thông tin chi tiết về sản phẩm.' },
-    { src: '/agenda/6.png', title: 'FINDING THE MUSE', description: 'Đừng để những biểu đồ vô cảm đánh lừa! Lắng nghe vị quân chủ với trái tim luôn hướng về người dùng giải thích tầm quan trọng của việc gặp gỡ "Nàng Muse" – người nắm giữ vận mệnh tính năng trước khi Nàng dỗi và bỏ đi tìm người khác.' },
-    { src: '/agenda/7.png', title: 'THE NEW CANVAS', description: 'Khung tranh đã sẵn sàng, nhưng bạn cần "vũ khí" mới. Khám phá Collab Hub và "kho báu" Merch cùng những Thẻ bài bí ẩn. Vũ khí mới để các Artisans biến Insight mặn mòi thành hành động có thật. Vẽ đẹp là có quà!' },
-    { src: '/agenda/8.png', title: 'THE SACRED VOW', description: 'Bản giao ước "nặng đô" hơn lời thề lễ đường. Đã hứa gặp User là phải đi, đừng làm "tra nam" trong truyền thuyết, tội người ta' },
+    { src: '/agenda/4.png', title: 'CHECK IN', description: 'Nơi nhận quà và tham quan không gian thưởng lãm nghệ thuật' },
+    { src: '/agenda/5.png', title: 'THE FIRST SKETCH', description: 'Xem lại hành trình trải qua với Customer 2H' },
+    { src: '/agenda/6.png', title: 'FINDING THE MUSE', description: 'Lắng nghe vị quân chủ giải thích tầm quan trọng của việc gặp gỡ "Nàng Muse"' },
+    { src: '/agenda/7.png', title: 'THE NEW CANVAS', description: 'Giới thiệu Collab Hub & Hệ thống đặc quyền (Merch) dành cho Manager +' },
+    { src: '/agenda/8.png', title: 'THE SACRED VOW', description: 'Ký kết bản cam kết với người dùng' },
     { src: '/agenda/9.png', title: 'MASTERPIECE CREATORS', description: 'Chiêm ngưỡng những "Idol" giới Customer 2H với kỷ lục thấu cảm User. Vào để học bí kíp hoặc đơn giản là để "GATO" lấy động lực thăng hạng.' },
-    { src: '/agenda/4.png', title: 'THE ART OF TOUCH', description: 'Nói chuyện với User là một nghệ thuật, và người đặt câu hỏi không bị "quê" chính là một nghệ sĩ. Gặp gỡ chuyên gia sẽ giúp bạn "mở khóa" trái tim User không cần búa. Học cách hỏi sao cho "nghệ", thoát kiếp người lạ từng quen mỗi khi đối diện khách hàng.' },
-    { src: '/agenda/5.png', title: 'THE LIVING PORTRAIT', description: 'Chạm vào Nàng Thơ. Đừng chỉ đứng xa ngắm nghía, hãy tiến tới "Chạm vào Nàng Thơ". Trực tiếp đối thoại để thấy User bằng xương bằng thịt còn drama hơn cả Data!' },
+    { src: '/agenda/4.png', title: 'THE ART OF TOUCH', description: 'Bỏ túi bí kíp kỹ năng giải mã User với Chuyên gia: Nói chuyện với User là một nghệ thuật, và người đặt câu hỏi không bị "quê" chính là một nghệ sĩ. Gặp gỡ chuyên gia sẽ giúp bạn "mở khóa" trái tim User không cần búa. Học cách hỏi sao cho "nghệ", thoát kiếp người lạ từng quen mỗi khi đối diện khách hàng.' },
+    { src: '/agenda/5.png', title: 'THE LIVING PORTRAIT', description: 'Hoạt động Walk-in – Trực tiếp chạm vào trải nghiệm thực của User cho 34 Managers+ đăng ký sớm' },
   ], [])
 
   // Data for the slider
@@ -183,9 +183,9 @@ export default function AgendaGallery() {
                         </div>
 
                         {/* Statues (Decorations) */}
-                        {index % 2 === 0 ? (
-                            <motion.div 
-                                className="absolute -left-10 bottom-0 z-0 md:z-50 pointer-events-none h-[60vh] md:h-[80vh] opacity-30 md:opacity-80"
+                        {/* {index % 2 === 1 ? ( */}
+                            {/* <motion.div 
+                                className="absolute -left-20 bottom-0 z-0 md:z-10 pointer-events-none h-[60vh] md:h-[80vh] opacity-30 md:opacity-80"
                                 initial={{ x: -100, opacity: 0 }}
                                 animate={{ x: 0, opacity: 0.8 }}
                                 transition={{ duration: 1 }}
@@ -198,10 +198,10 @@ export default function AgendaGallery() {
                                     className="object-contain h-full w-auto"
                                     priority
                                 />
-                            </motion.div>
-                        ) : (
+                            </motion.div> */}
+                        {/* ) : ( */}
                             <motion.div 
-                                className="absolute -right-10 bottom-0 z-0 md:z-50 pointer-events-none h-[60vh] md:h-[80vh] opacity-30 md:opacity-80"
+                                className="absolute -right-20 bottom-0 z-0 md:z-10 pointer-events-none h-[60vh] md:h-[80vh] opacity-30 md:opacity-80"
                                 initial={{ x: 100, opacity: 0 }}
                                 animate={{ x: 0, opacity: 0.8 }}
                                 transition={{ duration: 1 }}
@@ -215,7 +215,7 @@ export default function AgendaGallery() {
                                     priority
                                 />
                             </motion.div>
-                        )}
+                        {/* )} */}
 
                     </motion.div>
                 ))}

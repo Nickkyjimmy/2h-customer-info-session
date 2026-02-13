@@ -9,6 +9,7 @@ import CheckInForm from '@/components/CheckInForm'
 import MiniGame from '@/components/MiniGame'
 import OutroScroll from '@/components/OutroScroll'
 import { motion, AnimatePresence } from 'framer-motion'
+import MiniGameV2 from '@/components/MiniGameV2'
 
 export default function Home() {
   const [isContentLoaded, setIsContentLoaded] = useState(false)
@@ -26,7 +27,8 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    if (!attendanceId || !miniGameRef.current) return
+
+    if (!miniGameRef.current) return
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -38,7 +40,7 @@ export default function Home() {
      observer.observe(miniGameRef.current)
 
     return () => observer.disconnect()
-  }, [attendanceId])
+  }, [])
 
   const handleCheckInSuccess = (id: string) => {
     setAttendanceId(id)
@@ -105,13 +107,11 @@ export default function Home() {
       
       {/* Check-In Form Section */}
       <CheckInForm onSuccess={handleCheckInSuccess} />
-      
-      {/* Mini Game Section - Only visible after check-in */}
-      {attendanceId && (
-        <div ref={miniGameRef} className="min-h-screen relative">
-          <MiniGame attendanceId={attendanceId} />
-        </div>
-      )}
+
+      {/* Mini Game Section */}
+      <div ref={miniGameRef} className="min-h-screen relative">
+        <MiniGameV2 />
+      </div>
       
       {/* Outro Section */}
       <OutroScroll />

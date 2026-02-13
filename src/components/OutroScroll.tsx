@@ -6,7 +6,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
 const FRAME_COUNT = 240
-const FRAME_PATH = '/outro-animation/{i}.webp'
+const FRAME_PATH = '/opening-animation/{i}.webp'
 
 const Scene = ({ images, scrollYProgress }: { images: HTMLImageElement[], scrollYProgress: MotionValue<number> }) => {
   const meshRef = useRef<THREE.Mesh>(null)
