@@ -100,7 +100,7 @@ export default function HeroOverlay({
   const titleVariants = {
     initial: { x: '0px', y: '-20px', scale: 1, opacity: 1, pointerEvents: 'auto' as const },
     final: isMobile 
-      ? { x: '0px', y: '-40vh', scale: 0.7, opacity: 1, pointerEvents: 'auto' as const, transition: { duration: 1.5, ease: "easeOut" } as const }
+      ? { x: '0px', y: '-20px', scale: 0.9, opacity: 0, pointerEvents: 'none' as const, transition: { duration: 0.5 } as const }
       : { x: '-28vw', y: '-22vh', scale: 0.85, opacity: 1, pointerEvents: 'auto' as const, transition: { duration: 1.5, ease: "easeOut" } as const },
     hidden: { opacity: 0, pointerEvents: 'none' as const, transition: { duration: 0.5 } }
   }
@@ -166,8 +166,7 @@ export default function HeroOverlay({
               )}
             >
               <div className={cn(
-                "relative w-[clamp(10rem,40vw,12rem)] h-12 mb-2 ",
-                isMobile ? "mx-auto" : ""
+                isMobile ? "hidden" : "relative w-[clamp(10rem,40vw,12rem)] h-12 mb-2 "
               )}>
                 <Image 
                   src="/customer-2h-logo.svg" 

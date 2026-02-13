@@ -11,6 +11,7 @@ import OutroScroll from '@/components/OutroScroll'
 import { motion, AnimatePresence } from 'framer-motion'
 import MiniGameV2 from '@/components/MiniGameV2'
 import GlobalScrollIndicator from '@/components/GlobalScrollIndicator'
+import MobileTopLogo from '@/components/MobileTopLogo'
 
 export default function Home() {
   const [isContentLoaded, setIsContentLoaded] = useState(false)
@@ -92,6 +93,7 @@ export default function Home() {
       </AnimatePresence>
 
       <HeroOverlay isVisible={isContentLoaded} isMiniGameVisible={isMiniGameVisible} activeIndex={agendaActiveIndex} />
+      <MobileTopLogo isParentLoaded={isContentLoaded} />
       <GlobalScrollIndicator isParentLoaded={isContentLoaded} />
       {/* <AgendaTransitionOverlay /> */}
       <KeyboardScroll 

@@ -157,14 +157,14 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/40" />
 
       {/* Form Container */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         {/* Left Column: Reward Image */}
         <motion.div
            style={{ y: yParallax }}
            initial={{ opacity: 0, x: -50 }}
            whileInView={{ opacity: 1, x: 0 }}
            transition={{ duration: 1 }}
-           className="hidden lg:flex justify-center items-center gap-4"
+           className="flex justify-center items-center gap-4"
         >
            <div className="relative w-full aspect-[3/4] max-w-[1500px]">
              <Image 
