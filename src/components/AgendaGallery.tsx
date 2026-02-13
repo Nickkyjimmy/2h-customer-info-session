@@ -136,7 +136,7 @@ export default function AgendaGallery() {
                                 item.title === 'THE NEW CANVAS' ? "md:-ml-20 pl-6 z-50 relative" : "md:pl-10"
                             )}>
                                 <motion.h2 
-                                    className="text-4xl md:text-6xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9]"
+                                    className="text-2xl md:text-3xl lg:text-4xl font-black text-white tracking-tighter leading-[0.9]"
                                     initial={{ x: -50, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     transition={{ delay: 0.2, duration: 0.8 }}
@@ -144,7 +144,7 @@ export default function AgendaGallery() {
                                     {item.title}
                                 </motion.h2>
                                 <motion.p 
-                                    className="text-lg md:text-lg text-white/80 font-light max-w-md leading-relaxed"
+                                    className="text-sm md:text-sm text-white/80 font-light max-w-md leading-relaxed"
                                     initial={{ x: -30, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     transition={{ delay: 0.4, duration: 0.8 }}
@@ -163,7 +163,7 @@ export default function AgendaGallery() {
                                                 section.scrollIntoView({ behavior: 'smooth' });
                                             }
                                         }}
-                                        className="mt-6 px-8 py-3 bg-white text-black font-bold text-lg rounded-full hover:bg-gray-200 transition-colors duration-300"
+                                        className="mt-6 px-6 py-2 bg-white text-black font-bold text-sm rounded-full hover:bg-gray-200 transition-colors duration-300"
                                     >
                                         Đăng kí ngay
                                     </motion.button>

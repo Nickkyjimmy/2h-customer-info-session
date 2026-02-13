@@ -216,7 +216,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-4xl md:text-5xl font-bold text-center mb-3 text-amber-100 tracking-tight"
+              className="text-2xl md:text-3xl font-bold text-center mb-3 text-amber-100 tracking-tight"
               style={{
                 fontFamily: 'var(--font-dancing-script)',
                 textShadow: '0 2px 10px rgba(251, 191, 36, 0.3)'
@@ -229,7 +229,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-center text-sm md:text-base text-amber-200/70 mb-8 font-serif italic"
+              className="text-center text-[0.65rem] md:text-xs text-amber-200/70 mb-8 font-serif italic"
             >
             Số lượng có hạn! Đăng ký User Walk-in để sở hữu ngay <span className="font-bold text-amber-100">chiếc bình Customer 2H cực phẩm</span>!
             </motion.p>
@@ -250,7 +250,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
               >
                 <label 
                   htmlFor="domain" 
-                  className="block text-sm font-serif text-amber-100 mb-2 tracking-wide uppercase"
+                  className="block text-[0.6rem] font-serif text-amber-100 mb-2 tracking-wide uppercase"
                 >
                   Email 
                 </label>
@@ -259,7 +259,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                   id="domain"
                   value={domain}
                   onChange={(e) => setDomain(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 placeholder-[#F57799]/50 
+                  className="w-full px-4 py-2 text-sm bg-slate-800/50 border-2 text-amber-50 placeholder-[#F57799]/50 
                            focus:outline-none focus:ring-2
                            transition-all duration-300 font-serif
                            shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
@@ -282,7 +282,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
               >
                 <label 
                   htmlFor="office-location" 
-                  className="block text-sm font-serif text-amber-100 mb-2 tracking-wide uppercase"
+                  className="block text-[0.6rem] font-serif text-amber-100 mb-2 tracking-wide uppercase"
                 >
                   Văn Phòng
                 </label>
@@ -290,7 +290,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                   id="office-location"
                   value={selectedOffice}
                   onChange={(e) => setSelectedOffice(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 
+                  className="w-full px-4 py-2 text-sm bg-slate-800/50 border-2 text-amber-50 
                            focus:outline-none focus:ring-2
                            transition-all duration-300 font-serif
                            shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] appearance-none disabled:opacity-50"
@@ -324,7 +324,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
               >
                 <label 
                   htmlFor="office" 
-                  className="block text-sm font-serif text-amber-100 mb-2 tracking-wide uppercase"
+                  className="block text-[0.6rem] font-serif text-amber-100 mb-2 tracking-wide uppercase"
                 >
                   Chọn Session - User Walk-in
                 </label>
@@ -332,7 +332,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                   id="office"
                   value={sessionId}
                   onChange={(e) => setSessionId(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 
+                  className="w-full px-4 py-2 text-sm bg-slate-800/50 border-2 text-amber-50 
                            focus:outline-none focus:ring-2
                            transition-all duration-300 font-serif
                             shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] appearance-none disabled:opacity-50"
@@ -359,7 +359,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
               >
                 <label 
                   htmlFor="questions" 
-                  className="block text-sm font-serif text-amber-100 mb-2 tracking-wide uppercase"
+                  className="block text-[0.6rem] font-serif text-amber-100 mb-2 tracking-wide uppercase"
                 >
                   Câu hỏi dành cho chương trình
                 </label>
@@ -368,7 +368,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                   value={questions}
                   onChange={(e) => setQuestions(e.target.value)}
                   rows={2}
-                  className="w-full px-4 py-3 bg-slate-800/50 border-2 text-amber-50 placeholder-[#F57799]/50 
+                  className="w-full px-4 py-2 text-sm bg-slate-800/50 border-2 text-amber-50 placeholder-[#F57799]/50 
                            focus:outline-none focus:ring-2
                            transition-all duration-300 resize-none font-serif
                            shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
@@ -387,7 +387,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-red-900/30 border-2 border-red-500/50 rounded text-red-200 text-sm font-serif"
+                  className="p-4 bg-red-900/30 border-2 border-red-500/50 rounded text-red-200 text-xs font-serif"
                 >
                   {error}
                 </motion.div>
@@ -412,7 +412,7 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                   </div>
                   
                   {/* Button content */}
-                  <span className="relative block px-8 py-4 text-lg font-bold text-black tracking-widest uppercase
+                  <span className="relative block px-8 py-3 text-sm font-bold text-black tracking-widest uppercase
                                  font-serif group-hover:text-black transition-colors duration-300
                                  shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
                     {isSubmitting ? 'Submitting...' : 'Submit'}
@@ -480,17 +480,17 @@ export default function CheckInForm({ onSuccess }: CheckInFormProps) {
                   </div>
                 </div>
 
-                <h3 className="text-2xl font-serif text-[#EFD4B4] mb-4 uppercase tracking-wider">
+                <h3 className="text-xl font-serif text-[#EFD4B4] mb-4 uppercase tracking-wider">
                   Gửi form thành công
                 </h3>
-                <p className="text-amber-100/90 font-serif italic mb-8 leading-relaxed">
+                <p className="text-sm text-amber-100/90 font-serif italic mb-8 leading-relaxed">
                   Cảm ơn anh/chị đã gửi cầu hỏi<br />
                   Hẹn anh/chị tại buổi training nhé.
                 </p>
 
                 <button
                   onClick={handleCloseDialog}
-                  className="w-full py-3 bg-[#EFD4B4] text-black font-bold uppercase tracking-widest hover:brightness-110 transition-all duration-300 shadow-[0_5px_15px_rgba(239,212,180,0.3)]"
+                  className="w-full py-3 bg-[#EFD4B4] text-black text-sm font-bold uppercase tracking-widest hover:brightness-110 transition-all duration-300 shadow-[0_5px_15px_rgba(239,212,180,0.3)]"
                 >
                   Tiếp tục
                 </button>

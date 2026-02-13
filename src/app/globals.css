@@ -47,11 +47,6 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
-body {
-  overscroll-behavior: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 
 canvas {
   will-change: contents;
@@ -159,6 +154,7 @@ html.lenis body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

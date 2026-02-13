@@ -54,12 +54,12 @@ const SliderItem = React.memo(React.forwardRef<HTMLDivElement, SliderItemProps>(
                 <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/30 via-transparent via-50% to-black/50"></div>
 
                 {/* Title */}
-                <div className="absolute z-10 text-white bottom-5 left-5 text-[clamp(20px,3vw,30px)] drop-shadow-md font-bold uppercase tracking-wider">
+                <div className="absolute z-10 text-white bottom-5 left-5 text-[clamp(10px,1.5vw,15px)] drop-shadow-md font-bold uppercase tracking-wider">
                     {item.title}
                 </div>
 
                 {/* Number */}
-                <div className="absolute z-10 text-white top-2.5 left-5 text-[clamp(20px,10vw,80px)] font-black opacity-50">
+                <div className="absolute z-10 text-white top-2.5 left-5 text-[clamp(10px,5vw,40px)] font-black opacity-50">
                     {item.num}
                 </div>
 

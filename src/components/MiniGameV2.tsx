@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { Flip } from "gsap/Flip";
-import { CustomEase } from "gsap/CustomEase";
+import { Flip, CustomEase } from "gsap/all";
 // import { collection, defaultCollection } from "./_data/collection";
 
 // Register GSAP plugins
@@ -214,7 +213,7 @@ export default function ShuffleCardPage() {
         duration: 2,
         ease: "hop",
         stagger: -0.03,
-        onEnter: (element) => {
+        onEnter: (element: any) => {
           gsap.to(element, {
             rotation: "+=360",
           });
@@ -787,9 +786,9 @@ export default function ShuffleCardPage() {
         </div>
         <div ref={titleContainerRef} className="title-container"></div>
         <div ref={centerTextRef} className="center-text-container" style={{ opacity: 0 }}>
-          <h1>The Unspoken Truths</h1>
-          <p>Những sự thật không ai dám nói (trừ bộ thẻ này).</p>
-          <p className="text-xs mt-4 opacity-70 italic">-- Nhấn vào thẻ để xem thêm --</p>        </div>
+          <h1 className="text-xl md:text-2xl font-bold">The Unspoken Truths</h1>
+          <p className="text-sm md:text-base">Những sự thật không ai dám nói (trừ bộ thẻ này).</p>
+          <p className="text-[10px] md:text-xs mt-4 opacity-70 italic">-- Nhấn vào thẻ để xem thêm --</p>        </div>
       </div>
 
 
