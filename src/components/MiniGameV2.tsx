@@ -266,7 +266,7 @@ export default function ShuffleCardPage() {
 
       const config = {
         imageCount: ITEMS_COUNT,
-        radius: 400,
+        radius: 250,
         sensitivity: 500,
         effectFalloff: 250,
         cardMoveAmount: 50,
@@ -786,9 +786,9 @@ export default function ShuffleCardPage() {
         </div>
         <div ref={titleContainerRef} className="title-container"></div>
         <div ref={centerTextRef} className="center-text-container" style={{ opacity: 0 }}>
-          <h1 className="text-xl md:text-2xl font-bold">The Unspoken Truths</h1>
-          <p className="text-sm md:text-base">Những sự thật không ai dám nói (trừ bộ thẻ này).</p>
-          <p className="text-[10px] md:text-xs mt-4 opacity-70 italic">-- Nhấn vào thẻ để xem thêm --</p>        </div>
+          <h1 className="text-lg md:text-lg font-bold">The Unspoken Truths</h1>
+          <p className="text-xs md:text-xs">Những sự thật không ai dám nói (trừ bộ thẻ này).</p>
+          <p className="text-[8px] md:text-[10px] mt-4 opacity-70 italic">-- Nhấn vào thẻ để xem thêm --</p>        </div>
       </div>
 
 
@@ -798,270 +798,270 @@ export default function ShuffleCardPage() {
         /* Removed body/html overflow hidden to allow page scrolling */
         
         .mini-game-v2-root .loader {
-          position: absolute;
-          bottom: 15%;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 40px;
-          height: 40px;
-        }
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+          }
 
-        .mini-game-v2-root .loader p {
-          text-decoration: none;
-          color: #1f1f1f;
-          font-family: 'Inter', sans-serif;
-          font-weight: 600;
-          line-height: 1;
-          letter-spacing: -0.02em;
-        }
+          .mini-game-v2-root .loader p {
+            text-decoration: none;
+            color: #1f1f1f;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            line-height: 1;
+            letter-spacing: -0.02em;
+          }
 
-        .mini-game-v2-root a, .mini-game-v2-root p {
-          text-decoration: none;
-          color: #1f1f1f;
-          font-family: 'Inter', sans-serif;
-          font-weight: 600;
-          line-height: 1;
-          letter-spacing: -0.02em;
-        }
+          .mini-game-v2-root a, .mini-game-v2-root p {
+            text-decoration: none;
+            color: #1f1f1f;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            line-height: 1;
+            letter-spacing: -0.02em;
+          }
 
-        .mini-game-v2-root img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          backface-visibility: hidden;
-        }
+          .mini-game-v2-root img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            backface-visibility: hidden;
+          }
 
-        .mini-game-v2-root nav, .mini-game-v2-root footer {
-          position: absolute;
-          left: 0;
-          width: 100%;
-          padding: 2em;
-        }
+          .mini-game-v2-root nav, .mini-game-v2-root footer {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            padding: 2em;
+          }
 
-        .mini-game-v2-root footer {
-          bottom: 0;
-        }
+          .mini-game-v2-root footer {
+            bottom: 0;
+          }
 
-        .mini-game-v2-root .mg-container {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-        }
+          .mini-game-v2-root .mg-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+          }
 
-        .mini-game-v2-root .animation1-container {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-        }
+          .mini-game-v2-root .animation1-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+          }
 
-        .mini-game-v2-root .animation2-container {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 10;
-        }
+          .mini-game-v2-root .animation2-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+          }
 
-        .mini-game-v2-root .gallery-container {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          transform-style: preserve-3d;
-          perspective: 2000px;
-          will-change: transform;
-        }
+          .mini-game-v2-root .gallery-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+            perspective: 2000px;
+            will-change: transform;
+          }
 
-        .mini-game-v2-root .gallery {
-          position: relative;
-          width: 600px;
-          height: 600px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          transform-origin: center;
-          will-change: transform;
-        }
+          .mini-game-v2-root .gallery {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-origin: center;
+            will-change: transform;
+          }
 
-        .mini-game-v2-root .card {
-          position: absolute;
-          width: 100px;
-          height: 150px;
-          left: 50%;
-          top: 50%;
-          margin-left: -50px;
-          margin-top: -75px;
-          border-radius: 4px;
-          transform-origin: center;
-          will-change: transform;
-          transform-style: preserve-3d;
-          backface-visibility: visible;
-          overflow: hidden;
-        }
+          .mini-game-v2-root .card {
+            position: absolute;
+            width: 60px;
+            height: 90px;
+            left: 50%;
+            top: 50%;
+            margin-left: -30px;
+            margin-top: -45px;
+            border-radius: 2px;
+            transform-origin: center;
+            will-change: transform;
+            transform-style: preserve-3d;
+            backface-visibility: visible;
+            overflow: hidden;
+          }
 
-        .mini-game-v2-root .card-front,
-        .mini-game-v2-root .card-back {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          border-radius: 4px;
-          backface-visibility: hidden;
-          transform-style: preserve-3d;
-        }
+          .mini-game-v2-root .card-front,
+          .mini-game-v2-root .card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 2px;
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+          }
 
-        .mini-game-v2-root .card-front {
-          z-index: 2;
-          opacity: 1;
-          visibility: visible;
-        }
+          .mini-game-v2-root .card-front {
+            z-index: 2;
+            opacity: 1;
+            visibility: visible;
+          }
 
-        .mini-game-v2-root .card-front img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          display: block;
-          opacity: 1;
-          visibility: visible;
-        }
+          .mini-game-v2-root .card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            opacity: 1;
+            visibility: visible;
+          }
 
-        .mini-game-v2-root .card-back {
-          transform: rotateY(180deg);
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          padding: 8px;
-          box-sizing: border-box;
-          z-index: 1;
-          background-color: #aa0000;
-        }
+          .mini-game-v2-root .card-back {
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4px;
+            box-sizing: border-box;
+            z-index: 1;
+            background-color: #aa0000;
+          }
 
-        .mini-game-v2-root .card-back img {
-          display: none;
-        }
+          .mini-game-v2-root .card-back img {
+            display: none;
+          }
 
-        .mini-game-v2-root .card-name {
-          color: #fff;
-          font-family: 'Inter', sans-serif;
-          font-weight: 700;
-          font-size: 7px;
-          line-height: 1.2;
-          text-align: center;
-          margin-bottom: 3px;
-          letter-spacing: -0.01em;
-          word-break: break-word;
-          padding: 0 2px;
-        }
+          .mini-game-v2-root .card-name {
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 5px;
+            line-height: 1.2;
+            text-align: center;
+            margin-bottom: 2px;
+            letter-spacing: -0.01em;
+            word-break: break-word;
+            padding: 0 1px;
+          }
 
-        .mini-game-v2-root .card-role {
-          color: #e3e3db;
-          font-family: 'Inter', sans-serif;
-          font-weight: 500;
-          font-size: 7px;
-          line-height: 1.3;
-          text-align: center;
-          letter-spacing: -0.01em;
-          word-break: break-word;
-          padding: 0 2px;
-        }
+          .mini-game-v2-root .card-role {
+            color: #e3e3db;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 5px;
+            line-height: 1.3;
+            text-align: center;
+            letter-spacing: -0.01em;
+            word-break: break-word;
+            padding: 0 1px;
+          }
 
-        .mini-game-v2-root .title-container {
-          position: absolute;
-          bottom: 25%;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 100%;
-          height: 42px;
-          clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          z-index: 20;
-        }
+          .mini-game-v2-root .title-container {
+            position: absolute;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 42px;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+          }
 
-        .mini-game-v2-root .title-container p {
-          position: absolute;
-          width: 100%;
-          text-align: center;
-          font-size: 36px;
-          letter-spacing: -0.05em;
-          color: white;
-        }
+          .mini-game-v2-root .title-container p {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-size: 36px;
+            letter-spacing: -0.05em;
+            color: white;
+          }
 
-        .mini-game-v2-root .word {
-          position: absolute;
-          display: inline-block;
-          will-change: transform;
-        }
+          .mini-game-v2-root .word {
+            position: absolute;
+            display: inline-block;
+            will-change: transform;
+          }
 
-        .mini-game-v2-root .item {
-          position: absolute;
-          width: 100px;
-          height: 150px;
-          border-radius: 4px;
-          transform-origin: center;
-          will-change: transform;
-          transform-style: preserve-3d;
-          backface-visibility: visible;
-          overflow: hidden;
-        }
+          .mini-game-v2-root .item {
+            position: absolute;
+            width: 60px;
+            height: 90px;
+            border-radius: 2px;
+            transform-origin: center;
+            will-change: transform;
+            transform-style: preserve-3d;
+            backface-visibility: visible;
+            overflow: hidden;
+          }
 
-        .mini-game-v2-root .item img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          display: block;
-        }
+          .mini-game-v2-root .item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+          }
 
-        .mini-game-v2-root .footer-container {
-          padding: 0;
-        }
+          .mini-game-v2-root .footer-container {
+            padding: 0;
+          }
 
-        .mini-game-v2-root .footer-content p {
-          margin: 0;
-          color: #ffffff;
-        }
+          .mini-game-v2-root .footer-content p {
+            margin: 0;
+            color: #ffffff;
+          }
 
-        .mini-game-v2-root .center-text-container {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          text-align: center;
-          z-index: 5;
-          pointer-events: none;
-          width: 80%;
-          max-width: 600px;
-        }
+          .mini-game-v2-root .center-text-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 5;
+            pointer-events: none;
+            width: 80%;
+            max-width: 600px;
+          }
 
-        .mini-game-v2-root .center-text-container h1 {
-          font-family: 'Inter', sans-serif;
-          font-weight: 700;
-          font-size: 48px;
-          line-height: 1.1;
-          letter-spacing: -0.04em;
-          color: #ffffff;
-          margin: 0 0 16px 0;
-        }
+          .mini-game-v2-root .center-text-container h1 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+            color: #ffffff;
+            margin: 0 0 16px 0;
+          }
 
-        .mini-game-v2-root .center-text-container p {
-          font-family: 'Inter', sans-serif;
-          font-weight: 500;
-          font-size: 18px;
-          line-height: 1.5;
-          color: #d1d1d1;
-          margin: 0;
-        }
-      `}</style>
-    </div>
-  );
-}
+          .mini-game-v2-root .center-text-container p {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 18px;
+            line-height: 1.5;
+            color: #d1d1d1;
+            margin: 0;
+          }
+        `}</style>
+      </div>
+    );
+  }
 
