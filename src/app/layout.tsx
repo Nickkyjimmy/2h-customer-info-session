@@ -28,9 +28,9 @@ export const metadata: Metadata = {
   title: "Customer 2H Info Session | The New Era",
   description: "Join us for the Customer 2H Info Session - The New Era of Customer Experience",
   icons: {
-    icon: "/customer-2h-logo.svg",
-    shortcut: "/customer-2h-logo.svg",
-    apple: "/customer-2h-logo.svg",
+    icon: "/c2h-favicon.png",
+    shortcut: "/c2h-favicon.png",
+    apple: "/c2h-favicon.png",
   },
 };
 

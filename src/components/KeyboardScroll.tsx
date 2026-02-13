@@ -284,14 +284,14 @@ function IntroText({ scrollYProgress }: { scrollYProgress: MotionValue<number> }
             >
                 <div className="max-w-4xl text-center">
                   <p className="mt-4 text-white/50 text-lg md:text-xl font-bold uppercase tracking-widest italic">
-                        The New Era of Customer Experience
+                        Customer 2H | The New Era – 26.02 
                     </p>
                      <div className="mt-4 h-px w-24 bg-white/30 mx-auto mb-5" />
                     <h2 className="text-white text- xl md:text-xl lg:text-4xl font-bold tracking-tight leading-tight">
-                        Chào mừng bạn đến với <span className="text-white">Customer 2H Info Session</span>
+                        Chào mừng Anh/Chị bước vào không gian nghệ thuật<br></br>  8 phòng triển lãm - 1 hành trình trải nghiệm
                     </h2>
-                    <p className="mt-8 text-white/90 text-lg md:text-2xl font-light leading-relaxed max-w-2xl mx-auto">
-                        Phòng tranh được mở vào 26.2 sẽ gồm có 8 phòng
+                    <p className="mt-8 text-white/90 text-lg md:text-xl font-light leading-relaxed max-w-2xl mx-auto">
+                        Hãy khám phá từng phòng để cảm nhận trọn vẹn hành trình này nhé
                     </p>
                 </div>
             </motion.div>

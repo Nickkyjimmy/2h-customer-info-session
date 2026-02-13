@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useMemo } from 'react'
-import { useScroll, useSpring, MotionValue } from 'framer-motion'
+import { useScroll, useSpring, MotionValue, useTransform, motion } from 'framer-motion'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
@@ -171,13 +171,48 @@ export default function OutroScroll() {
             >
                 <Scene images={images} scrollYProgress={smoothProgress} />
             </Canvas>
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-black">
-              {/* Optional: Simple loader for outro if user scrolls fast */}
-              <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-          </div>
-        )}
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center bg-black">
+                {/* Optional: Simple loader for outro if user scrolls fast */}
+                <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+            </div>
+          )}
+          <OutroText scrollYProgress={smoothProgress} />
       </div>
     </div>
   )
+}
+
+function OutroText({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
+    // Fade out as we scroll down the outro
+    // Visible at start (0), fades out by 30% scroll
+    const opacity = useTransform(scrollYProgress, [0, 0.15, 0.3], [0, 1, 0])
+    const bgOpacity = useTransform(scrollYProgress, [0, 0.15, 0.3], [0, 0.7, 0])
+    const y = useTransform(scrollYProgress, [0, 0.3], [0, -50])
+    const scale = useTransform(scrollYProgress, [0, 0.3], [1, 0.95])
+
+    return (
+        <div className="absolute inset-0 z-10 pointer-events-none">
+            {/* Dark background overlay */}
+            <motion.div 
+                style={{ opacity: bgOpacity }}
+                className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"
+            />
+            
+            <motion.div 
+                style={{ opacity, y, scale }}
+                className="absolute inset-0 flex items-center justify-center px-6"
+            >
+                <div className="max-w-3xl text-center">
+                    <p className="text-white/90 text-lg md:text-2xl font-light leading-relaxed mb-8">
+                        Nhân ngày làm việc cuối năm <span className="font-bold text-white">Customer2H</span> chúc anh/chị một kỳ nghỉ hạnh phúc bên gia đình & một năm mới rực rỡ.
+                    </p>
+                    <div className="h-px w-24 bg-white/30 mx-auto mb-8" />
+                    <h3 className="text-white text-xl md:text-3xl font-bold tracking-tight uppercase">
+                        Hẹn gặp lại anh/chị vào 26.2
+                    </h3>
+                </div>
+            </motion.div>
+        </div>
+    )
 }

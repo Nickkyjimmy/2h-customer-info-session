@@ -194,7 +194,7 @@ export default function HeroOverlay({
                     style={{ pointerEvents: pointerEventsInitial }}
                     className="absolute inset-0"
                  >
-                    <p className="text-[clamp(0.75rem,2.5vw,1rem)] text-white/90 font-extrabold leading-snug">
+                    <p className="text-[clamp(0.9rem,4vw,1.2rem)] text-white/90 font-extrabold leading-snug">
                        Sự kiện ra mắt chính thức chương trình Customer 2H
                     </p>
                  </motion.div>

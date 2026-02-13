@@ -149,7 +149,9 @@ export default function AgendaGallery({
                             <div className={cn(
                                 "flex flex-col justify-center space-y-6",
                                 specialTitles.includes(item.title)
-                                    ? (item.title === 'THE NEW CANVAS' ? "text-left md:ml-10 pl-6 z-50 relative" : "text-left md:pl-10")
+                                    ? (item.title === 'THE NEW CANVAS' 
+                                        ? "text-left mt-24 md:mt-0 md:ml-10 pl-6 z-50 relative" 
+                                        : "text-left mt-24 md:mt-0 md:pl-10")
                                     : "text-center items-center max-w-4xl mx-auto"
                             )}>
                                 <motion.div
