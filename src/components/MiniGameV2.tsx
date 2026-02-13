@@ -875,7 +875,7 @@ export default function ShuffleCardPage() {
   }, []);
 
   return (
-    <div className="mini-game-v2-root relative w-full min-h-screen bg-[#e3e3db] text-[#1f1f1f] overflow-hidden">
+    <div className="mini-game-v2-root relative w-full min-h-screen bg-[url('/mini-app.png')] bg-cover bg-center bg-no-repeat text-[#1f1f1f] overflow-hidden">
       {/* Animation 1: Linear to Circular */}
       <div
         ref={container1Ref}
@@ -1147,6 +1147,7 @@ export default function ShuffleCardPage() {
 
         .mini-game-v2-root .footer-content p {
           margin: 0;
+          color: #ffffff;
         }
 
         .mini-game-v2-root .center-text-container {
@@ -1167,7 +1168,7 @@ export default function ShuffleCardPage() {
           font-size: 48px;
           line-height: 1.1;
           letter-spacing: -0.04em;
-          color: #1f1f1f;
+          color: #ffffff;
           margin: 0 0 16px 0;
         }
 
@@ -1176,7 +1177,7 @@ export default function ShuffleCardPage() {
           font-weight: 500;
           font-size: 18px;
           line-height: 1.5;
-          color: #555;
+          color: #d1d1d1;
           margin: 0;
         }
       `}</style>

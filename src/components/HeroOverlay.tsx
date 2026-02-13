@@ -251,6 +251,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                  style={{ pointerEvents: pointerEventsFinal }}
                  className="absolute bottom-0 left-0 w-[420px] flex flex-col gap-0.5 text-white"
               >
+                  <h3 className="text-xl font-bold mb-4 uppercase tracking-widest text-white/50">Event Agenda</h3>
                   {agendaList.map((item, i) => {
                       const isActive = activeId === item.id
                       return (

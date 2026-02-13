@@ -108,7 +108,7 @@ export default function AgendaGallery() {
                     >
                         {/* Background Image / Main Visual */}
                         <div className="absolute inset-0 z-0">
-                           <div className="absolute inset-0 bg-black/20 z-10" /> {/* Overlay for readability */}
+                           <div className="absolute inset-0  z-10" /> {/* Overlay for readability */}
                            <Image
                                 src={item.src}
                                 alt={item.title}
@@ -127,7 +127,7 @@ export default function AgendaGallery() {
                                 item.title === 'THE NEW CANVAS' ? "md:-ml-20 pl-6 z-50 relative" : "md:pl-10"
                             )}>
                                 <motion.h2 
-                                    className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9]"
+                                    className="text-4xl md:text-6xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9]"
                                     initial={{ x: -50, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     transition={{ delay: 0.2, duration: 0.8 }}
@@ -135,7 +135,7 @@ export default function AgendaGallery() {
                                     {item.title}
                                 </motion.h2>
                                 <motion.p 
-                                    className="text-lg md:text-xl text-white/80 font-light max-w-md leading-relaxed"
+                                    className="text-lg md:text-lg text-white/80 font-light max-w-md leading-relaxed"
                                     initial={{ x: -30, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     transition={{ delay: 0.4, duration: 0.8 }}
