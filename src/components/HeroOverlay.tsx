@@ -54,8 +54,12 @@ export default function HeroOverlay({
       { id: 'VIII', title: 'THE LIVING PORTRAIT' },
   ]
 
-  // Weights must match AgendaGallery logic: Index 3 (NEW CANVAS) is 6x
-  const weights = agendaList.map((_, i) => i === 3 ? 6 : 1)
+  // Weights must match AgendaGallery logic: Index 3 (NEW CANVAS) is 6x, Index 2 (FINDING MUSE) is 3x
+  const weights = agendaList.map((_, i) => {
+      if (i === 3) return 6
+      if (i === 2) return 3
+      return 1
+  })
   const totalWeight = weights.reduce((a, b) => a + b, 0)
   
   const ranges = weights.map((w, i) => {
@@ -68,13 +72,13 @@ export default function HeroOverlay({
   // Scroll to section handler
   const scrollToSection = (index: number) => {
       const heroHeight = window.innerHeight * 6 
-      // Total height matches AgendaGallery total weight * 100vh
-      const galleryHeight = totalWeight * window.innerHeight 
+      // Total height matches AgendaGallery total weight * 100vh + 100vh
+      const galleryHeight = (totalWeight + 1) * window.innerHeight 
       const scrollableDistance = galleryHeight - window.innerHeight
       
       const [startRatio] = ranges[index]
       
-      const targetY = heroHeight + startRatio * scrollableDistance + 5
+      const targetY = heroHeight + startRatio * scrollableDistance + 50
       window.scrollTo({ top: targetY, behavior: 'smooth' })
   }
 
@@ -83,7 +87,7 @@ export default function HeroOverlay({
       if (typeof window === 'undefined') return
       
       const heroHeight = window.innerHeight * 6
-      const galleryHeight = totalWeight * window.innerHeight
+      const galleryHeight = (totalWeight + 1) * window.innerHeight
       const galleryEnd = heroHeight + galleryHeight
 
       // Hide TOC if we've scrolled past the gallery

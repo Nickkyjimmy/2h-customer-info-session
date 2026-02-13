@@ -205,7 +205,7 @@ function OutroText({ scrollYProgress }: { scrollYProgress: MotionValue<number> }
             >
                 <div className="max-w-3xl text-center">
                     <p className="text-white/90 text-lg md:text-2xl font-light leading-relaxed mb-8">
-                        Nhân ngày làm việc cuối năm <span className="font-bold text-white">Customer2H</span> chúc anh/chị một kỳ nghỉ hạnh phúc bên gia đình & một năm mới rực rỡ.
+                        Chúc Anh/Chị một kỳ nghỉ hạnh phúc bên gia đình <br></br> và một năm mới rực rỡ 🧨
                     </p>
                     <div className="h-px w-24 bg-white/30 mx-auto mb-8" />
                     <h3 className="text-white text-xl md:text-3xl font-bold tracking-tight uppercase">

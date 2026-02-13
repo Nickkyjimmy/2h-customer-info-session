@@ -52,8 +52,12 @@ export default function AgendaGallery({
 
   const specialTitles = ['FINDING THE MUSE', 'THE ART OF TOUCH', 'THE LIVING PORTRAIT', 'THE NEW CANVAS']
 
-  // Weights for scroll duration: 'THE NEW CANVAS' gets 6x duration
-  const weights = useMemo(() => agendaItems.map(item => item.title === 'THE NEW CANVAS' ? 6 : 1), [agendaItems])
+  // Weights for scroll duration: 'THE NEW CANVAS' gets 6x duration, 'FINDING THE MUSE' gets 3x
+  const weights = useMemo(() => agendaItems.map(item => {
+      if (item.title === 'THE NEW CANVAS') return 6
+      if (item.title === 'FINDING THE MUSE') return 3
+      return 1
+  }), [agendaItems])
   const totalWeight = useMemo(() => weights.reduce((a, b) => a + b, 0), [weights])
 
   // Pre-calculate ranges to ensure stable tracking
@@ -108,8 +112,8 @@ export default function AgendaGallery({
     <section
       ref={containerRef}
       className="agenda-gallery-section relative w-full bg-black"
-      // Height based on total weight
-      style={{ height: `${totalWeight * 100}vh` }} 
+      // Height based on total weight + 1 to ensure effective scroll distance equals totalWeight * 100vh
+      style={{ height: `${(totalWeight + 1) * 100}vh` }} 
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center">
         
