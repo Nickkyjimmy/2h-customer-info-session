@@ -179,14 +179,14 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                   )}
                 />
               </div>
-              <span className="text-[clamp(1.125rem,4vw,1.5rem)]">The </span>
+              <span className="text-[clamp(1.25rem,4.5vw,1.75rem)]">The </span>
               <br />
-              <span className="text-[clamp(1.125rem,4vw,1.5rem)]">New </span>
-              <span className="font-[family-name:var(--font-dancing-script)] italic font-light text-[clamp(1.375rem,5vw,1.875rem)]">era</span>
+              <span className="text-[clamp(1.25rem,4.5vw,1.75rem)]">New </span>
+              <span className="font-[family-name:var(--font-dancing-script)] italic font-light text-[clamp(1.5rem,6vw,2.25rem)]">era</span>
             </motion.h1>
 
              {/* Swappable Subtitle */}
-             <div className="relative mt-4 h-[clamp(20px,4vw,30px)]">
+             <div className="relative mt-4 h-[clamp(25px,5vw,40px)]">
                  {/* Initial Text */}
                  <motion.div 
                     initial="initial"
@@ -195,7 +195,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                     style={{ pointerEvents: pointerEventsInitial }}
                     className="absolute inset-0"
                  >
-                    <p className="text-[clamp(0.6rem,2vw,0.75rem)] text-white/90 font-extrabold leading-snug">
+                    <p className="text-[clamp(0.75rem,2.5vw,1rem)] text-white/90 font-extrabold leading-snug">
                        Sự kiện ra mắt chính thức chương trình Customer 2H
                     </p>
                  </motion.div>
@@ -239,9 +239,9 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                     transition={{ duration: 0.6, delay: 0.8 }}
                     className="border-l-2 border-white/30 pl-4 py-1"
                  >
-                    <p className="uppercase text-[clamp(0.4rem,1vw,0.5rem)] tracking-widest text-white/50 mb-1 font-semibold">Thời gian</p>
-                    <p className="font-medium text-[clamp(0.6rem,1.5vw,0.75rem)] text-white">14:00 - 16:00</p>
-                    <p className="opacity-80 text-[clamp(0.5rem,1.2vw,0.6rem)]">26/02/2026</p>
+                    <p className="uppercase text-[clamp(0.5rem,1.2vw,0.6rem)] tracking-widest text-white/50 mb-1 font-semibold">Thời gian</p>
+                    <p className="font-medium text-[clamp(0.7rem,2vw,0.9rem)] text-white">14:00 - 16:00</p>
+                    <p className="opacity-80 text-[clamp(0.6rem,1.5vw,0.75rem)]">26/02/2026</p>
                  </motion.div>
 
                  <motion.div
@@ -250,9 +250,9 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                     transition={{ duration: 0.6, delay: 1.0 }}
                     className="border-l-2 border-white/30 pl-4 py-1"
                  >
-                    <p className="uppercase text-[clamp(0.4rem,1vw,0.5rem)] tracking-widest text-white/50 mb-1 font-semibold">Địa điểm</p>
-                    <p className="font-medium text-[clamp(0.6rem,1.5vw,0.75rem)] text-white">Sảnh lầu 6,</p>
-                    <p className="opacity-80 text-[clamp(0.5rem,1.2vw,0.6rem)]">Tòa nhà Phú Mỹ Hưng, Văn Phòng Hồ Chí Minh</p>
+                    <p className="uppercase text-[clamp(0.5rem,1.2vw,0.6rem)] tracking-widest text-white/50 mb-1 font-semibold">Địa điểm</p>
+                    <p className="font-medium text-[clamp(0.7rem,2vw,0.9rem)] text-white">Sảnh lầu 6,</p>
+                    <p className="opacity-80 text-[clamp(0.6rem,1.5vw,0.75rem)]">Tòa nhà Phú Mỹ Hưng, Văn Phòng Hồ Chí Minh</p>
                  </motion.div>
               </motion.div>
 
@@ -264,7 +264,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                  style={{ pointerEvents: pointerEventsFinal }}
                  className="absolute bottom-0 left-0 w-full md:w-[420px] flex flex-col gap-0.5 text-white"
               >
-                  <h3 className="text-[clamp(0.5rem,1.5vw,0.75rem)] font-bold mb-4 uppercase tracking-widest text-white/50">Event Agenda</h3>
+                  <h3 className="text-[clamp(0.6rem,1.8vw,0.9rem)] font-bold mb-4 uppercase tracking-widest text-white/50">Event Agenda</h3>
                   {agendaList.map((item, i) => {
                       const isActive = activeId === item.id
                       return (
@@ -280,7 +280,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                              animate={isActive ? "visible" : "hidden"}
                              whileHover="visible"
                           >
-                              <span className="font-bold tracking-tight uppercase text-[clamp(0.5rem,1.5vw,0.7rem)] leading-none text-white whitespace-nowrap z-10">
+                              <span className="font-bold tracking-tight uppercase text-[clamp(0.6rem,1.8vw,0.85rem)] leading-none text-white whitespace-nowrap z-10">
                                   {item.title}
                               </span>
                               
@@ -296,7 +296,7 @@ export default function HeroOverlay({ isVisible, isMiniGameVisible = false }: { 
                                   />
                               </div>
                               
-                              <span className={`font-serif italic text-[clamp(0.4rem,1.2vw,0.6rem)] transition-colors duration-300 z-10 ${isActive ? 'text-white font-semibold' : 'text-white/30 group-hover:text-white/60'}`}>
+                              <span className={`font-serif italic text-[clamp(0.5rem,1.5vw,0.7rem)] transition-colors duration-300 z-10 ${isActive ? 'text-white font-semibold' : 'text-white/30 group-hover:text-white/60'}`}>
                                   {item.id}
                               </span>
                           </motion.div>

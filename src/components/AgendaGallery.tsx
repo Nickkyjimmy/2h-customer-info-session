@@ -128,12 +128,19 @@ export default function AgendaGallery() {
                         </div>
 
                         {/* Content Layer */}
-                        <div className="relative z-40 w-full max-w-7xl px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full">
+                        <div className={cn(
+                            "relative z-40 w-full max-w-7xl px-6 md:px-12 h-full",
+                            specialTitles.includes(item.title) 
+                                ? "grid grid-cols-1 md:grid-cols-2 gap-8 items-center" 
+                                : "flex flex-col items-center justify-center"
+                        )}>
                             
                             {/* Left Side: Text */}
                             <div className={cn(
-                                "flex flex-col justify-center text-left space-y-6",
-                                item.title === 'THE NEW CANVAS' ? "md:-ml-20 pl-6 z-50 relative" : "md:pl-10"
+                                "flex flex-col justify-center space-y-6",
+                                specialTitles.includes(item.title)
+                                    ? (item.title === 'THE NEW CANVAS' ? "text-left md:ml-10 pl-6 z-50 relative" : "text-left md:pl-10")
+                                    : "text-center items-center max-w-4xl mx-auto"
                             )}>
                                 <motion.h2 
                                     className="text-2xl md:text-3xl lg:text-4xl font-black text-white tracking-tighter leading-[0.9]"
@@ -171,8 +178,8 @@ export default function AgendaGallery() {
                             </div>
 
                             {/* Right Side: Visuals for Special Items */}
-                            <div className="relative h-full flex items-center justify-center w-full">
-                                {specialTitles.includes(item.title) && (
+                            {specialTitles.includes(item.title) && (
+                                <div className="relative h-full flex items-center justify-center w-full">
                                      <motion.div
                                         initial={{ opacity: 0, x: 50, rotate: 5 }}
                                         animate={{ opacity: 1, x: 0, rotate: 0 }}
@@ -204,8 +211,8 @@ export default function AgendaGallery() {
                                             />
                                         )}
                                      </motion.div>
-                                )}
-                            </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Statues (Decorations) */}
