@@ -14,8 +14,8 @@ if (typeof window !== "undefined") {
 const ITEMS_COUNT = 21;
 const CARD_COUNT = ITEMS_COUNT;
 const cardData = Array.from({ length: ITEMS_COUNT }, (_, i) => ({
-  title: `Member ${i + 1}`,
-  name: `Member ${i + 1}`,
+  title: ``,
+  name: ``,
   role: "Role",
   color: "#aa0000",
 }));
@@ -522,118 +522,7 @@ export default function ShuffleCardPage() {
       }
 
       const hideSelectedCard = () => {
-        if (!selectedCardRef.current) return;
-        
-        const card = selectedCardRef.current;
-        
-        // Hide the card with fade out animation
-        gsap.to(card, {
-          opacity: 0,
-          scale: 0,
-          duration: 0.5,
-          ease: "power2.inOut",
-          onComplete: () => {
-            // Get current cards and transformState arrays
-            const cards = cardsRef.current;
-            const transformState = transformStateRef.current;
-            
-            // Find the card index in the array
-            const cardIndexInArray = cards.findIndex(c => c === card);
-            
-            if (cardIndexInArray !== -1) {
-              // Remove card from DOM
-              card.remove();
-              
-              // Remove card from cards array
-              cards.splice(cardIndexInArray, 1);
-              
-              // Remove from transformState array
-              if (transformState[cardIndexInArray]) {
-                transformState.splice(cardIndexInArray, 1);
-              }
-              
-              // Update the refs
-              cardsRef.current = cards;
-              transformStateRef.current = transformState;
-              
-              // Recalculate positions for remaining cards
-              const remainingCount = cards.length;
-              if (remainingCount > 0) {
-                cards.forEach((remainingCard, i) => {
-                  const newAngle = (i / remainingCount) * Math.PI * 2;
-                  const newX = config.radius * Math.cos(newAngle);
-                  const newY = config.radius * Math.sin(newAngle);
-                  
-                  // Update transform state
-                  if (transformState[i]) {
-                    transformState[i].angle = newAngle;
-                    transformState[i].targetRotation = 0;
-                    transformState[i].currentRotation = 0;
-                    transformState[i].targetScale = 1;
-                    transformState[i].currentScale = 1;
-                    transformState[i].targetX = 0;
-                    transformState[i].currentX = 0;
-                    transformState[i].targetY = 0;
-                    transformState[i].currentY = 0;
-                  }
-                  
-                  // Update card dataset index
-                  remainingCard.dataset.index = String(i);
-                  
-                  // Animate to new position
-                  gsap.to(remainingCard, {
-                    x: newX,
-                    y: newY,
-                    rotation: newAngle * (180 / Math.PI) + 90,
-                    duration: 0.8,
-                    ease: "power2.out",
-                  });
-                });
-              }
-            } else {
-              // If card not found in array, just remove from DOM
-              card.remove();
-            }
-            
-            selectedCardRef.current = null;
-            isPreviewActiveRef.current = false;
-            isTransitioningRef.current = false;
-            
-            // Reset gallery position
-            const viewportWidth = window.innerWidth;
-            let galleryScale = 1;
-            if (viewportWidth < 768) {
-              galleryScale = 0.6;
-            } else if (viewportWidth < 1200) {
-              galleryScale = 0.8;
-            }
-
-            gsap.to(gallery2, {
-              scale: galleryScale,
-              y: 0,
-              x: 0,
-              rotation: 0,
-              duration: 1.5,
-              ease: "power4.inOut",
-            });
-            
-            // Remove title
-            if (currentTileRef.current) {
-              gsap.to(currentTileRef.current, {
-                opacity: 0,
-                y: -20,
-                duration: 0.5,
-                ease: "power4.out",
-                onComplete: () => {
-                  if (currentTileRef.current) {
-                    currentTileRef.current.remove();
-                    currentTileRef.current = null;
-                  }
-                },
-              });
-            }
-          },
-        });
+        resetGallery();
       };
 
       // Store functions in refs for access outside useEffect
@@ -900,7 +789,7 @@ export default function ShuffleCardPage() {
         <div ref={centerTextRef} className="center-text-container" style={{ opacity: 0 }}>
           <h1>The Unspoken Truths</h1>
           <p>Những sự thật không ai dám nói (trừ bộ thẻ này).</p>
-        </div>
+          <p className="text-xs mt-4 opacity-70 italic">-- Nhấn vào thẻ để xem thêm --</p>        </div>
       </div>
 
 
@@ -1114,6 +1003,7 @@ export default function ShuffleCardPage() {
           text-align: center;
           font-size: 36px;
           letter-spacing: -0.05em;
+          color: white;
         }
 
         .mini-game-v2-root .word {
