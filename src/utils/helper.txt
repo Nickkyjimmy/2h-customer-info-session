@@ -1,0 +1,12 @@
+SELECT 
+    a.domain              AS email,
+    a.questions,
+    a.created_at,
+    s.name                AS session_name,
+    o.name                AS office_name,
+    c.name                AS card_name
+FROM attendances a
+LEFT JOIN sessions s  ON a.session_id   = s.id
+LEFT JOIN offices  o  ON a.office_id    = o.id
+LEFT JOIN card     c  ON a.card_receive = c.id
+ORDER BY a.created_at DESC;
